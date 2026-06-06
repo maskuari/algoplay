@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "880790353663",
+    "project_id": "algoplay-b191c",
+    "storage_bucket": "algoplay-b191c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:880790353663:android:cc4664fc4b98d862737eca",
+        "android_client_info": {
+          "package_name": "com.algoplay.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "880790353663-9natvcptjlkc6gs37g3au8aqriqap5n4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.algoplay.app",
+            "certificate_hash": "501b714dbe98d19bdfa5cd8b2543e10d195bbaa8"
+          }
+        },
+        {
+          "client_id": "880790353663-57t4hslk26jljd5p07ij2oc0d8a33jjr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAc4gX5klayTol0cX4JOzyyKKW16AC2YIA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "880790353663-57t4hslk26jljd5p07ij2oc0d8a33jjr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

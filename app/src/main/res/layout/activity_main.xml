@@ -1,0 +1,2054 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_login_page"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <View
+        android:layout_width="86dp"
+        android:layout_height="86dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="54dp"
+        android:layout_marginEnd="-30dp"
+        android:background="@drawable/bg_bubble_mint" />
+
+    <View
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:layout_gravity="top|start"
+        android:layout_marginStart="-20dp"
+        android:layout_marginTop="148dp"
+        android:background="@drawable/bg_bubble_yellow" />
+
+    <ScrollView
+        android:id="@+id/mainScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingTop="96dp"
+        android:paddingBottom="140dp">
+
+        <LinearLayout
+            android:id="@+id/contentRoot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingTop="14dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="156dp">
+
+            <LinearLayout
+                android:id="@+id/topHeader"
+                android:layout_width="match_parent"
+                android:layout_height="92dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txtWelcome"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="Halo, Teman!"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="26sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtSubtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Pilih misi belajar hari ini."
+                        android:textColor="@color/algoplay_subtext"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="96dp"
+                    android:layout_height="82dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/bg_home_card"
+                    android:elevation="2dp"
+                    android:padding="4dp">
+
+                    <ImageView
+                        android:id="@+id/imgTopHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="Logo AlgoPlay"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/logo2" />
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/homeDashboard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="176dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_home_hero_clean"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:elevation="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="22dp"
+                    android:paddingTop="14dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="14dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Halo,"
+                            android:textColor="@color/algoplay_subtext"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtHomeGreeting"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:autoSizeMaxTextSize="25sp"
+                            android:autoSizeMinTextSize="18sp"
+                            android:autoSizeStepGranularity="1sp"
+                            android:autoSizeTextType="uniform"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:text="Ayo Belajar!"
+                            android:textColor="@color/algoplay_text"
+                            android:textSize="25sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="9dp"
+                            android:lineSpacingExtra="2dp"
+                            android:maxLines="2"
+                            android:text="Misi kecil hari ini, score besar nanti."
+                            android:textColor="@color/algoplay_subtext"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_marginStart="8dp"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="Petualangan belajar AlgoPlay"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/welcome" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/homeChallengeCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="152dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_stat_orange"
+                    android:clickable="true"
+                    android:elevation="2dp"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="12dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="12dp">
+
+                    <ImageView
+                        android:layout_width="90dp"
+                        android:layout_height="90dp"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="Tantangan"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/tantangan_home" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Tantangan Hari Ini"
+                            android:textColor="#EA6B1A"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                        android:id="@+id/txtHomeChallengeCaption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:ellipsize="end"
+                        android:lineSpacingExtra="1dp"
+                        android:maxLines="4"
+                        android:text="4 soal random siap dibuka. Score masuk total leaderboard."
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/btnHomeChallenge"
+                        android:layout_width="72dp"
+                        android:layout_height="38dp"
+                        android:background="@drawable/bg_button_yellow"
+                        android:gravity="center"
+                        android:text="Mainkan"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/homeContinueCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="172dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_home_card"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:elevation="2dp"
+                    android:paddingStart="18dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="14dp"
+                    android:paddingBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingEnd="120dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/txtHomeContinueTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:autoSizeMaxTextSize="19sp"
+                            android:autoSizeMinTextSize="16sp"
+                            android:autoSizeStepGranularity="1sp"
+                            android:autoSizeTextType="uniform"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="Lanjutkan Belajar"
+                            android:textColor="@color/algoplay_text"
+                            android:textSize="19sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                        android:id="@+id/txtHomeContinueCaption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="Dasar Flowchart"
+                        android:textColor="@color/algoplay_blue_dark"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                        <ProgressBar
+                            android:id="@+id/homeContinueProgress"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="12dp"
+                            android:layout_marginTop="10dp"
+                            android:max="100"
+                            android:progress="75"
+                            android:progressDrawable="@drawable/progress_weekly" />
+
+                        <TextView
+                        android:id="@+id/btnHomeContinue"
+                        android:layout_width="86dp"
+                        android:layout_height="36dp"
+                        android:layout_marginTop="10dp"
+                            android:background="@drawable/bg_button_green"
+                            android:gravity="center"
+                            android:text="Lanjut"
+                            android:textColor="@color/white"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="118dp"
+                        android:layout_height="118dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="Lanjutkan belajar"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/lanjutkanbelajar" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:text="Aktivitas Seru"
+                    android:textColor="@color/algoplay_text"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:columnCount="2"
+                    android:rowCount="2">
+
+                    <LinearLayout
+                        android:id="@+id/homeActivityMateri"
+                        style="@style/HomeActivityCard"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="@drawable/bg_score_blue">
+
+                        <ImageView
+                            style="@style/HomeActivityIcon"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/materi_home" />
+
+                        <LinearLayout style="@style/HomeActivityTextGroup">
+                            <TextView style="@style/HomeActivityTitle" android:text="Materi" />
+                            <TextView style="@style/HomeActivityDesc" android:text="Belajar konsep dasar" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/homeActivityFlowchart"
+                        style="@style/HomeActivityCard"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="@drawable/bg_score_green">
+
+                        <ImageView
+                            style="@style/HomeActivityIcon"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/flowchart_home" />
+
+                        <LinearLayout style="@style/HomeActivityTextGroup">
+                            <TextView style="@style/HomeActivityTitle" android:text="Flowchart" />
+                            <TextView style="@style/HomeActivityDesc" android:text="Pahami alur program" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/homeActivityGames"
+                        style="@style/HomeActivityCard"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_score_purple">
+
+                        <ImageView
+                            style="@style/HomeActivityIcon"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/games_home" />
+
+                        <LinearLayout style="@style/HomeActivityTextGroup">
+                            <TextView style="@style/HomeActivityTitle" android:text="Games" />
+                            <TextView style="@style/HomeActivityDesc" android:text="Belajar sambil main" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/homeActivityLeaderboard"
+                        style="@style/HomeActivityCard"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_score_orange">
+
+                        <ImageView
+                            style="@style/HomeActivityIcon"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/leaderboard_home" />
+
+                        <LinearLayout style="@style/HomeActivityTextGroup">
+                            <TextView style="@style/HomeActivityTitle" android:text="Leaderboard" />
+                            <TextView style="@style/HomeActivityDesc" android:text="Lihat peringkatmu" />
+                            <TextView
+                                android:id="@+id/txtHomeLeaderboardRank"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:gravity="center"
+                                android:text="Rank -- - 0 score"
+                                android:textColor="@color/algoplay_gold_dark"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </GridLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="104dp"
+                    android:layout_marginTop="18dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_stat_green"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Akurasi"
+                            android:textColor="@color/algoplay_green_dark"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtHomeAccuracy"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="88%"
+                            android:textColor="@color/algoplay_green_dark"
+                            android:textSize="26sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_stat_orange"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Streak"
+                            android:textColor="#EA6B1A"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtHomeStreak"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="3 hari"
+                            android:textColor="#EA6B1A"
+                            android:textSize="26sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/materiProgressTop"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="12dp"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:id="@+id/materiTopProgress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="12dp"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_weekly" />
+
+                <TextView
+                    android:id="@+id/txtMateriTopPercent"
+                    android:layout_width="54dp"
+                    android:layout_height="34dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/bg_detail_chip"
+                    android:gravity="center"
+                    android:text="0%"
+                    android:textColor="@color/algoplay_green_dark"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/materiHeroCard"
+                android:layout_width="match_parent"
+                android:layout_height="178dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/bg_score_green"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="18dp"
+                android:paddingTop="14dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="14dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="Jalur Belajar"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="9dp"
+                        android:lineSpacingExtra="2dp"
+                        android:maxLines="3"
+                        android:text="Baca materi dari dasar, lalu buka level berikutnya satu per satu."
+                        android:textColor="@color/algoplay_subtext"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="8dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Belajar materi AlgoPlay"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/belajar_materi" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/materiInfoCard"
+                android:layout_width="match_parent"
+                android:layout_height="132dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/bg_home_card"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="12dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="112dp"
+                    android:layout_height="112dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Informasi penjelasan materi"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/informasi_penjelasan" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Penjelasan Singkat"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Setiap topik dibuat bertahap supaya alurnya mudah dipahami."
+                        android:textColor="@color/algoplay_subtext"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/materiMascotCard"
+                android:layout_width="match_parent"
+                android:layout_height="136dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/bg_score_blue"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="14dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="10dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="118dp"
+                    android:layout_height="118dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Albi menyapa di materi"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/hai_materi" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Albi Siap Bantu"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Selesaikan satu materi dulu, lalu lanjut ke materi berikutnya."
+                        android:textColor="@color/algoplay_subtext"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/heroCard"
+                android:layout_width="match_parent"
+                android:layout_height="176dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/bg_home_mission"
+                android:elevation="3dp"
+                android:paddingStart="24dp"
+                android:paddingTop="22dp"
+                android:paddingEnd="22dp"
+                android:paddingBottom="22dp">
+
+                <View
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="-18dp"
+                    android:layout_marginEnd="46dp"
+                    android:background="@drawable/bg_bubble_yellow" />
+
+                <View
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="96dp"
+                    android:layout_marginBottom="-8dp"
+                    android:background="@drawable/bg_bubble_pink" />
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="22dp"
+                    android:contentDescription="Hiasan bintang"
+                    android:src="@drawable/ic_sparkle"
+                    app:tint="@color/white" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txtHeroTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="Misi Hari Ini"
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtHeroDesc"
+                        android:layout_width="220dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Selesaikan 1 materi dan 1 latihan untuk membuka reward baru."
+                        android:textColor="#EAF8FF"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/txtHeroChip"
+                        android:layout_width="112dp"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_reward_chip"
+                        android:gravity="center"
+                        android:text="+10 Score"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="66dp"
+                    android:layout_height="66dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:background="@drawable/bg_home_star_circle"
+                    android:elevation="1dp">
+
+                    <ImageView
+                        android:id="@+id/imgHeroIcon"
+                        android:layout_width="31dp"
+                        android:layout_height="31dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Ikon tab"
+                        android:src="@drawable/ic_star"
+                        app:tint="@color/algoplay_text" />
+
+                </FrameLayout>
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/mascotTalkCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/bg_mascot_speech"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="14dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="12dp">
+
+                <FrameLayout
+                    android:layout_width="116dp"
+                    android:layout_height="108dp"
+                    android:background="@drawable/bg_mascot_circle"
+                    android:padding="4dp">
+
+                    <ImageView
+                        android:id="@+id/imgMascotTalk"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="Albi berbicara"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/hai" />
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txtMascotTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="Albi bilang"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtMascotSpeech"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Yuk mulai dari satu langkah kecil dulu."
+                        android:textColor="@color/algoplay_subtext"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/statsRow"
+                android:layout_width="match_parent"
+                android:layout_height="78dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="2dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    style="@style/HomeStatCard"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:id="@+id/txtStatLevel"
+                        style="@style/HomeStatValue"
+                        android:text="1" />
+
+                    <TextView
+                        style="@style/HomeStatLabel"
+                        android:text="Level" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    style="@style/HomeStatCard"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp">
+
+                    <TextView
+                        android:id="@+id/txtStatActivities"
+                        style="@style/HomeStatValue"
+                        android:text="0" />
+
+                    <TextView
+                        style="@style/HomeStatLabel"
+                        android:text="Bintang" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    style="@style/HomeStatCard"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        android:id="@+id/txtStatMission"
+                        style="@style/HomeStatValue"
+                        android:text="2" />
+
+                    <TextView
+                        style="@style/HomeStatLabel"
+                        android:text="Misi" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txtSectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:text="Menu Belajar"
+                android:textColor="@color/algoplay_text"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/lessonList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="vertical"
+                android:visibility="gone" />
+
+            <GridLayout
+                android:id="@+id/cardGrid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:columnCount="2"
+                android:rowCount="2">
+
+                <LinearLayout
+                    android:id="@+id/cardOne"
+                    style="@style/HomeMenuCard"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp">
+
+                    <FrameLayout
+                        android:id="@+id/iconWrapOne"
+                        style="@style/HomeMenuIcon"
+                        android:background="@drawable/bg_icon_blue">
+
+                        <ImageView
+                            android:id="@+id/imgCardOne"
+                            style="@style/HomeMenuIconImage"
+                            android:contentDescription="Ikon kartu satu"
+                            android:src="@drawable/ic_code" />
+
+                    </FrameLayout>
+
+                    <LinearLayout
+                        style="@style/HomeMenuTextGroup">
+
+                        <TextView
+                            android:id="@+id/txtCardOneTitle"
+                            style="@style/HomeMenuTitle"
+                            android:text="Algoritma" />
+
+                        <TextView
+                            android:id="@+id/txtCardOneDesc"
+                            style="@style/HomeMenuDesc"
+                            android:text="Urutan langkah" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/cardTwo"
+                    style="@style/HomeMenuCard"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="16dp">
+
+                    <FrameLayout
+                        android:id="@+id/iconWrapTwo"
+                        style="@style/HomeMenuIcon"
+                        android:background="@drawable/bg_icon_green">
+
+                        <ImageView
+                            android:id="@+id/imgCardTwo"
+                            style="@style/HomeMenuIconImage"
+                            android:contentDescription="Ikon kartu dua"
+                            android:src="@drawable/ic_flow" />
+
+                    </FrameLayout>
+
+                    <LinearLayout
+                        style="@style/HomeMenuTextGroup">
+
+                        <TextView
+                            android:id="@+id/txtCardTwoTitle"
+                            style="@style/HomeMenuTitle"
+                            android:text="Flowchart" />
+
+                        <TextView
+                            android:id="@+id/txtCardTwoDesc"
+                            style="@style/HomeMenuDesc"
+                            android:text="Simbol dan panah" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/cardThree"
+                    style="@style/HomeMenuCard"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="8dp">
+
+                    <FrameLayout
+                        android:id="@+id/iconWrapThree"
+                        style="@style/HomeMenuIcon"
+                        android:background="@drawable/bg_icon_blue">
+
+                        <ImageView
+                            android:id="@+id/imgCardThree"
+                            style="@style/HomeMenuIconImage"
+                            android:contentDescription="Ikon kartu tiga"
+                            android:src="@drawable/ic_diamond" />
+
+                    </FrameLayout>
+
+                    <LinearLayout
+                        style="@style/HomeMenuTextGroup">
+
+                        <TextView
+                            android:id="@+id/txtCardThreeTitle"
+                            style="@style/HomeMenuTitle"
+                            android:text="Puzzle" />
+
+                        <TextView
+                            android:id="@+id/txtCardThreeDesc"
+                            style="@style/HomeMenuDesc"
+                            android:text="Susun instruksi" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/cardFour"
+                    style="@style/HomeMenuCard"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="2dp">
+
+                    <FrameLayout
+                        android:id="@+id/iconWrapFour"
+                        style="@style/HomeMenuIcon"
+                        android:background="@drawable/bg_icon_purple">
+
+                        <ImageView
+                            android:id="@+id/imgCardFour"
+                            style="@style/HomeMenuIconImage"
+                            android:contentDescription="Ikon kartu empat"
+                            android:src="@drawable/ic_quiz" />
+
+                    </FrameLayout>
+
+                    <LinearLayout
+                        style="@style/HomeMenuTextGroup">
+
+                        <TextView
+                            android:id="@+id/txtCardFourTitle"
+                            style="@style/HomeMenuTitle"
+                            android:text="Kuis" />
+
+                        <TextView
+                            android:id="@+id/txtCardFourDesc"
+                            style="@style/HomeMenuDesc"
+                            android:text="Ambil reward" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </GridLayout>
+
+            <LinearLayout
+                android:id="@+id/leaderboardDashboard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="2dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/leaderboardPodiumRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="218dp"
+                    android:baselineAligned="false"
+                    android:gravity="bottom"
+                    android:orientation="horizontal" />
+
+                <LinearLayout
+                    android:id="@+id/leaderboardList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/profileDashboard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="274dp"
+                    android:layout_marginStart="-24dp"
+                    android:layout_marginTop="-110dp"
+                    android:layout_marginEnd="-24dp"
+                    android:background="@color/algoplay_splash_dark"
+                    android:clipChildren="false"
+                    android:clipToPadding="false">
+
+                    <FrameLayout
+                        android:id="@+id/profilePhotoButton"
+                        android:layout_width="132dp"
+                        android:layout_height="132dp"
+                        android:layout_gravity="bottom|center_horizontal"
+                        android:layout_marginBottom="-66dp"
+                        android:background="@drawable/bg_profile_photo_frame"
+                        android:clickable="true"
+                        android:elevation="5dp"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:padding="10dp">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/imgProfilePhoto"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:contentDescription="Foto profil"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_user"
+                            app:shapeAppearanceOverlay="@style/ShapeAppearance.AlgoPlay.Circle"
+                            app:strokeColor="@color/white"
+                            app:strokeWidth="0dp" />
+
+                        <TextView
+                            android:layout_width="58dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="bottom|center_horizontal"
+                            android:layout_marginBottom="-6dp"
+                            android:background="@drawable/bg_button_green"
+                            android:gravity="center"
+                            android:text="+ Foto"
+                            android:textColor="@color/white"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+
+                    </FrameLayout>
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/txtProfileGreeting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="70dp"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="Teman"
+                    android:textColor="@color/algoplay_text"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/profileBadgeRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:layout_marginTop="9dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imgProfileLeaderboardBadge"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:background="@drawable/bg_badge_gold"
+                        android:contentDescription="Lencana leaderboard"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_star"
+                        app:tint="@color/white" />
+
+                    <ImageView
+                        android:id="@+id/imgProfileMaterialBadge"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/bg_badge_green"
+                        android:contentDescription="Lencana materi"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_code"
+                        app:tint="@color/white" />
+
+                    <ImageView
+                        android:id="@+id/imgProfileLevelBadge"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/bg_badge_blue"
+                        android:contentDescription="Lencana tingkatan"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_diamond"
+                        app:tint="@color/white" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txtProfileRankBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_profile_rank_badge"
+                    android:gravity="center"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="18dp"
+                    android:text="Tingkat 1 - Beginner"
+                    android:textColor="@color/algoplay_blue_dark"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="132dp"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_home_card"
+                    android:elevation="2dp"
+                    android:orientation="vertical"
+                    android:paddingStart="18dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="18dp"
+                    android:paddingBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Progress Materi"
+                            android:textColor="@color/algoplay_text"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtProfileProgressPercent"
+                            android:layout_width="58dp"
+                            android:layout_height="32dp"
+                            android:background="@drawable/bg_detail_chip"
+                            android:gravity="center"
+                            android:text="0%"
+                            android:textColor="@color/algoplay_green_dark"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/txtProfileProgressCaption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Selesai 0 dari 12 materi"
+                        android:textColor="@color/algoplay_subtext"
+                        android:textSize="13sp" />
+
+                    <ProgressBar
+                        android:id="@+id/profileMaterialProgress"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="14dp"
+                        android:layout_marginTop="16dp"
+                        android:max="100"
+                        android:progress="0"
+                        android:progressDrawable="@drawable/progress_weekly" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Statistik Belajar"
+                    android:textColor="@color/algoplay_text"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="102dp"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_stat_green"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/txtAccuracy"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="0%"
+                            android:textColor="@color/algoplay_green_dark"
+                            android:textSize="27sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Akurasi"
+                            android:textColor="@color/algoplay_text"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_stat_orange"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/txtRewardScore"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="#EA6B1A"
+                            android:textSize="27sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Total Score"
+                            android:textColor="@color/algoplay_text"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="102dp"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_score_blue"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/txtProfileAverageScore"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="@color/algoplay_blue_dark"
+                            android:textSize="23sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Rata-rata"
+                            android:textColor="@color/algoplay_text"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_score_purple"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/txtProfileModes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="@color/algoplay_purple"
+                            android:textSize="27sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Mode Aktif"
+                            android:textColor="@color/algoplay_text"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="102dp"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_score_green"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/txtProfileLessons"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="0/12"
+                            android:textColor="@color/algoplay_green_dark"
+                            android:textSize="27sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Materi"
+                            android:textColor="@color/algoplay_text"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_score_orange"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/txtProfileActivities"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="#EA6B1A"
+                            android:textSize="27sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Score Tertinggi"
+                            android:textColor="@color/algoplay_text"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="132dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_home_card"
+                    android:elevation="2dp"
+                    android:orientation="vertical"
+                    android:paddingStart="18dp"
+                    android:paddingTop="15dp"
+                    android:paddingEnd="18dp"
+                    android:paddingBottom="15dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Streak Login"
+                            android:textColor="@color/algoplay_text"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtStreakBadge"
+                            android:layout_width="86dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/bg_profile_rank_badge"
+                            android:gravity="center"
+                            android:text="0/7 aktif"
+                            android:textColor="@color/algoplay_blue_dark"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/profileStreakWeek"
+                        android:layout_width="match_parent"
+                        android:layout_height="54dp"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_home_card"
+                    android:elevation="2dp"
+                    android:orientation="vertical"
+                    android:paddingStart="18dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="18dp"
+                    android:paddingBottom="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Statistik Latihan"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="Best score, rata-rata, dan akurasi dari 4 mode."
+                        android:textColor="@color/algoplay_subtext"
+                        android:textSize="12sp" />
+
+                    <LinearLayout
+                        android:id="@+id/profileScoreChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="128dp"
+                        android:layout_marginTop="14dp"
+                        android:gravity="bottom"
+                        android:orientation="horizontal" />
+
+                    <LinearLayout
+                        android:id="@+id/profileTrainingStatsList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="92dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_home_card"
+                    android:elevation="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="18dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Badge Aktif"
+                            android:textColor="@color/algoplay_text"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtProfileBadge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Pemula Algoritma"
+                            android:textColor="@color/algoplay_subtext"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/txtProfileRankStatus"
+                        android:layout_width="94dp"
+                        android:layout_height="42dp"
+                        android:background="@drawable/bg_reward_chip"
+                        android:gravity="center"
+                        android:text="Beginner"
+                        android:textColor="@color/algoplay_gold_dark"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/detailCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/bg_detail_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="18dp">
+
+                <TextView
+                    android:id="@+id/txtDetailEyebrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="28dp"
+                    android:background="@drawable/bg_detail_chip"
+                    android:gravity="center"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:text="Panduan Albi"
+                    android:textColor="@color/algoplay_blue_dark"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtDetailTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:includeFontPadding="false"
+                    android:text="Mulai dari misi kecil"
+                    android:textColor="@color/algoplay_text"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtDetailBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="3dp"
+                    android:text="Pilih satu aktivitas, selesaikan, lalu kumpulkan score."
+                    android:textColor="@color/algoplay_subtext"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/txtDetailSteps"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_detail_steps"
+                    android:lineSpacingExtra="4dp"
+                    android:padding="14dp"
+                    android:text="1. Baca contoh\n2. Coba latihan\n3. Ambil reward"
+                    android:textColor="@color/algoplay_text"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/txtDetailAction"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_button_green"
+                    android:gravity="center"
+                    android:text="Mulai"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/progressCard"
+                android:layout_width="match_parent"
+                android:layout_height="102dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:paddingStart="22dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="22dp"
+                android:paddingBottom="18dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txtProgressTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Progress Belajar"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtProgressPercent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="66%"
+                        android:textColor="@color/algoplay_green_dark"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/progressLearning"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="12dp"
+                    android:layout_marginTop="18dp"
+                    android:max="100"
+                    android:progress="66"
+                    android:progressDrawable="@drawable/progress_weekly" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/appStatusBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_gravity="top"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_home_card"
+        android:elevation="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <LinearLayout
+            android:id="@+id/homeProfileMenuButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.08"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/homeProfileAvatarWrap"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_profile_avatar"
+                android:padding="7dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgHomeProfilePhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Foto profil"
+                    android:src="@drawable/ic_user"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.AlgoPlay.Circle"
+                    app:tint="@color/algoplay_blue_dark" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/txtHomeUserName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Teman"
+                android:textColor="@color/algoplay_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1.15"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtHomeDay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Sabtu"
+                android:textColor="@color/algoplay_blue_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtHomeDateTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="6 Juni 2026 - 23:41"
+                android:textColor="@color/algoplay_subtext"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/homeRankBadge"
+            android:layout_width="92dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_reward_chip"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp">
+
+            <TextView
+                android:id="@+id/txtHomeRankLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="Tingkat 1"
+                android:textColor="@color/algoplay_gold_dark"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtHomeRankStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Beginner"
+                android:textColor="@color/algoplay_text"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="98dp"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_bottom_nav"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <LinearLayout
+            android:id="@+id/navHome"
+            style="@style/BottomNavItem"
+            android:background="@drawable/bg_nav_active">
+
+            <ImageView
+                android:id="@+id/imgNavHome"
+                style="@style/BottomNavIcon"
+                android:contentDescription="Home"
+                android:src="@drawable/home" />
+
+            <TextView
+                android:id="@+id/txtNavHome"
+                style="@style/BottomNavText"
+                android:text="Home"
+                android:textColor="@color/algoplay_blue"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navMateri"
+            style="@style/BottomNavItem">
+
+            <ImageView
+                android:id="@+id/imgNavMateri"
+                style="@style/BottomNavIcon"
+                android:contentDescription="Materi"
+                android:src="@drawable/materi" />
+
+            <TextView
+                android:id="@+id/txtNavMateri"
+                style="@style/BottomNavText"
+                android:text="Materi" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navLatihan"
+            style="@style/BottomNavItem">
+
+            <ImageView
+                android:id="@+id/imgNavLatihan"
+                style="@style/BottomNavIcon"
+                android:contentDescription="Latihan"
+                android:src="@drawable/latihan" />
+
+            <TextView
+                android:id="@+id/txtNavLatihan"
+                style="@style/BottomNavText"
+                android:text="Latihan" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navLeaderboard"
+            style="@style/BottomNavItem">
+
+            <ImageView
+                android:id="@+id/imgNavLeaderboard"
+                style="@style/BottomNavIcon"
+                android:contentDescription="Leaderboard"
+                android:src="@drawable/leaderboard" />
+
+            <TextView
+                android:id="@+id/txtNavLeaderboard"
+                style="@style/BottomNavText"
+                android:text="Rank" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navProfil"
+            style="@style/BottomNavItem">
+
+            <ImageView
+                android:id="@+id/imgNavProfil"
+                style="@style/BottomNavIcon"
+                android:contentDescription="Profil"
+                android:src="@drawable/profile" />
+
+            <TextView
+                android:id="@+id/txtNavProfil"
+                style="@style/BottomNavText"
+                android:text="Profil" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

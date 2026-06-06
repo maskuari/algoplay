@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_tab_materi"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <ScrollView
+        android:id="@+id/lessonScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingTop="112dp"
+        android:paddingBottom="30dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="22dp"
+            android:paddingEnd="22dp"
+            android:paddingBottom="28dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="188dp"
+                android:background="@drawable/bg_home_hero_clean"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:elevation="2dp"
+                android:paddingStart="20dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="18dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:paddingEnd="132dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="Materi 1"
+                        android:textColor="@color/algoplay_green_dark"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="1dp"
+                        android:text="Yuk Kenalan dengan Algoritma"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="23sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Belajar bahwa algoritma adalah langkah-langkah berurutan."
+                        android:textColor="@color/algoplay_subtext"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="132dp"
+                    android:layout_height="132dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Robot Algo"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/hai_materi" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Tujuan Materi" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Anak-anak dapat memahami bahwa algoritma adalah urutan langkah-langkah untuk menyelesaikan kegiatan atau masalah." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Halo, teman-teman!" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Hari ini kita akan belajar tentang algoritma. Algoritma itu sering kita gunakan setiap hari, lho. Misalnya saat menyikat gigi, memakai sepatu, membuat susu, merapikan mainan, atau bersiap pergi ke sekolah." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Semua kegiatan itu punya langkah-langkah. Nah, algoritma adalah urutan langkah-langkah untuk menyelesaikan sesuatu." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Kalau langkahnya urut, kegiatan bisa selesai dengan benar. Kalau acak, hasilnya bisa membingungkan. Memakai sepatu dulu baru kaus kaki pasti terasa aneh, kan?" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Contoh Langkah Berurutan" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="12dp"
+                    android:text="Menyikat Gigi" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="1. Ambil sikat gigi.\n2. Beri pasta gigi.\n3. Sikat gigi.\n4. Berkumur.\n5. Simpan sikat gigi." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Memakai Sepatu" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="1. Ambil kaus kaki.\n2. Pakai kaus kaki.\n3. Ambil sepatu.\n4. Pakai sepatu.\n5. Ikat tali sepatu." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Membuat Susu" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="1. Siapkan gelas.\n2. Masukkan susu.\n3. Tuang air.\n4. Aduk sampai rata.\n5. Susu siap diminum." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Mini Game" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="8dp"
+                    android:text="Susun Langkah Menyikat Gigi" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Bantu robot Algo menyusun langkah dengan benar. Tahan balok, lalu seret ke kotak nomor 1 sampai 5." />
+
+                <LinearLayout
+                    android:id="@+id/gameChoiceContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical" />
+
+                <LinearLayout
+                    android:id="@+id/gameSlotContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/btnResetGame"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_marginEnd="7dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_auth_switch_panel"
+                        android:gravity="center"
+                        android:text="Ulangi"
+                        android:textColor="@color/algoplay_blue_dark"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btnCheckGame"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_marginStart="7dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_button_green"
+                        android:gravity="center"
+                        android:text="Cek Jawaban"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Quiz Singkat" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="10dp"
+                    android:text="1. Algoritma adalah..." />
+
+                <LinearLayout
+                    android:id="@+id/quizOneContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="16dp"
+                    android:text="2. Mengapa langkah algoritma harus berurutan?" />
+
+                <LinearLayout
+                    android:id="@+id/quizTwoContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_stat_green"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Keren! Kamu sudah mengenal apa itu algoritma. Banyak kegiatan sehari-hari ternyata memakai algoritma."
+                    android:textColor="@color/algoplay_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="84dp"
+                    android:layout_height="84dp"
+                    android:layout_marginStart="8dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Robot senang"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/sorakan_leaderboard" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btnFinishLesson"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_button_blue"
+                android:gravity="center"
+                android:text="Lanjut ke Materi 2"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/lessonTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_gravity="top"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_home_card"
+        android:elevation="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.08"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/lessonTopAvatarWrap"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_profile_avatar"
+                android:padding="7dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgLessonTopPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Foto profil"
+                    android:src="@drawable/ic_user"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.AlgoPlay.Circle"
+                    app:tint="@color/algoplay_blue_dark" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/txtLessonTopName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Teman"
+                android:textColor="@color/algoplay_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1.15"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtLessonTopDay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Minggu"
+                android:textColor="@color/algoplay_blue_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtLessonTopDateTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="7 Juni 2026 - 04:37"
+                android:textColor="@color/algoplay_subtext"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lessonRankBadge"
+            android:layout_width="92dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_reward_chip"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp">
+
+            <TextView
+                android:id="@+id/txtLessonRankLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="Tingkat 1"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtLessonRankStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Beginner"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AlgoPlay</string>
+    <!-- Ganti dengan Web Client ID dari Firebase Console jika google-services.json belum diupdate -->
+    <string name="default_web_client_id">YOUR_WEB_CLIENT_ID_HERE</string>
+</resources>

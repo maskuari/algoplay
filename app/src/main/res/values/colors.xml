@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="algoplay_blue">#29A9EC</color>
+    <color name="algoplay_blue_dark">#1589D1</color>
+    <color name="algoplay_blue_soft">#EAF8FF</color>
+    <color name="algoplay_bg">#F1FAFF</color>
+    <color name="algoplay_text">#14324A</color>
+    <color name="algoplay_subtext">#62798D</color>
+    <color name="algoplay_yellow">#FFD84D</color>
+    <color name="algoplay_green">#62DEB5</color>
+    <color name="algoplay_green_dark">#2BCB7A</color>
+    <color name="algoplay_red">#FF6575</color>
+    <color name="algoplay_red_dark">#E74958</color>
+    <color name="algoplay_gold">#FFD86B</color>
+    <color name="algoplay_gold_dark">#C98700</color>
+    <color name="algoplay_purple">#8C72FF</color>
+    <color name="algoplay_pink">#FF7BB5</color>
+    <color name="algoplay_tab_home_top">#DDF3FF</color>
+    <color name="algoplay_tab_materi_top">#DDFBEF</color>
+    <color name="algoplay_tab_latihan_top">#FFE3E7</color>
+    <color name="algoplay_tab_leaderboard_top">#FFF1BF</color>
+    <color name="algoplay_tab_profile_top">#F7FCFF</color>
+    <color name="algoplay_splash_dark">#050A3D</color>
+    <color name="algoplay_launch_sky">#015DE3</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+</resources>

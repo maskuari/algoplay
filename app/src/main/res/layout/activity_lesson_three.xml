@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_tab_materi"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <ScrollView
+        android:id="@+id/lessonScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingTop="112dp"
+        android:paddingBottom="30dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="22dp"
+            android:paddingEnd="22dp"
+            android:paddingBottom="28dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="188dp"
+                android:background="@drawable/bg_home_hero_clean"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:elevation="2dp"
+                android:paddingStart="20dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="18dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:paddingEnd="132dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="Materi 3"
+                        android:textColor="@color/algoplay_green_dark"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="1dp"
+                        android:text="Belajar Urutan Kegiatan"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="23sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Yuk bantu robot Algo menyusun kegiatan dari awal sampai selesai."
+                        android:textColor="@color/algoplay_subtext"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="134dp"
+                    android:layout_height="134dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Robot Algo menjelaskan"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/informasi_penjelasan" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Tujuan Materi" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Anak-anak dapat memahami bahwa kegiatan punya urutan dari awal sampai akhir, dan urutan itu perlu benar supaya kegiatan berhasil dilakukan." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Halo, teman-teman!" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Robot Algo datang lagi nih! Hari ini kita belajar tentang urutan kegiatan. Urutan kegiatan adalah langkah-langkah yang dilakukan dari awal sampai selesai." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Coba bayangkan kamu mau makan roti selai. Kalau rotinya belum diambil dan belum diberi selai, lalu langsung dimakan, selainya belum ada dong." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Jadi kita perlu tahu apa yang dilakukan pertama, apa yang dilakukan setelah itu, dan apa yang dilakukan terakhir." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Penjelasan Fun" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Sekarang bayangkan robot Algo mau mandi, tapi Algo pakai baju bersih dulu, baru mandi, lalu pakai sabun. Waduh, bajunya malah basah semua." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Urutan Mandi yang Benar" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="1. Masuk kamar mandi.\n2. Siram badan dengan air.\n3. Pakai sabun.\n4. Bilas sampai bersih.\n5. Keringkan badan.\n6. Pakai baju bersih." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Kalau urutannya benar, badan jadi bersih dan baju tetap rapi." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Contoh Sehari-hari" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="12dp"
+                    android:text="Membuat Roti Selai" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="1. Ambil roti.\n2. Ambil selai.\n3. Oleskan selai ke roti.\n4. Tutup dengan roti lain.\n5. Roti selai siap dimakan." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Menggambar" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="1. Siapkan kertas.\n2. Siapkan pensil.\n3. Buat gambar.\n4. Warnai gambar.\n5. Rapikan hasil gambar." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Menanam Bunga" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="1. Siapkan pot.\n2. Masukkan tanah.\n3. Masukkan biji bunga.\n4. Siram dengan air.\n5. Letakkan di tempat terkena cahaya matahari." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Kesimpulan" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Urutan kegiatan adalah susunan langkah dari awal sampai akhir. Setiap kegiatan punya urutan yang benar." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Kalau urutannya benar, kegiatan jadi mudah dilakukan, tidak membingungkan, dan hasilnya lebih baik." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Ingat ya: langkah pertama dulu, lalu lanjut ke langkah berikutnya." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Mini Game" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="8dp"
+                    android:text="Klik Urutan Membuat Roti Selai" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Robot Algo sedang lapar. Klik gambar sesuai urutan yang benar supaya roti selainya berhasil dibuat." />
+
+                <LinearLayout
+                    android:id="@+id/gameSlotContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical" />
+
+                <LinearLayout
+                    android:id="@+id/gameChoiceContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/btnResetGame"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_marginEnd="7dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_auth_switch_panel"
+                        android:gravity="center"
+                        android:text="Ulangi"
+                        android:textColor="@color/algoplay_blue_dark"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btnCheckGame"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_marginStart="7dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_button_green"
+                        android:gravity="center"
+                        android:text="Cek Urutan"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Quiz Singkat" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="10dp"
+                    android:text="1. Apa itu urutan kegiatan?" />
+
+                <LinearLayout
+                    android:id="@+id/quizOneContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="16dp"
+                    android:text="2. Mana urutan yang benar saat menggambar?" />
+
+                <LinearLayout
+                    android:id="@+id/quizTwoContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_stat_green"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Keren! Sekarang kamu tahu bahwa setiap kegiatan punya urutan. Kalau langkahnya rapi, kegiatan jadi mudah selesai."
+                    android:textColor="@color/algoplay_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="84dp"
+                    android:layout_height="84dp"
+                    android:layout_marginStart="8dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Robot senang"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/sorakan_leaderboard" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btnFinishLesson"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_button_blue"
+                android:gravity="center"
+                android:text="Lanjut ke Materi 4"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/lessonTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_gravity="top"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_home_card"
+        android:elevation="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.08"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/lessonTopAvatarWrap"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_profile_avatar"
+                android:padding="7dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgLessonTopPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Foto profil"
+                    android:src="@drawable/ic_user"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.AlgoPlay.Circle"
+                    app:tint="@color/algoplay_blue_dark" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/txtLessonTopName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Teman"
+                android:textColor="@color/algoplay_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1.15"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtLessonTopDay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Minggu"
+                android:textColor="@color/algoplay_blue_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtLessonTopDateTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="7 Juni 2026 - 04:37"
+                android:textColor="@color/algoplay_subtext"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lessonRankBadge"
+            android:layout_width="92dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_reward_chip"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp">
+
+            <TextView
+                android:id="@+id/txtLessonRankLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="Tingkat 1"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtLessonRankStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Beginner"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>
