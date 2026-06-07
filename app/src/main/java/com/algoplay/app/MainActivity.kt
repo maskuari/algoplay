@@ -5,6 +5,8 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.content.SharedPreferences
+import android.text.InputFilter
+import android.text.InputType
 import android.graphics.Color
 import android.graphics.BitmapFactory
 import android.graphics.Typeface
@@ -20,6 +22,7 @@ import android.view.View
 import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
 import android.widget.GridLayout
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -31,10 +34,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.FirebaseStorage
 import java.net.URL
 import java.time.LocalDate
 import java.time.ZoneId
@@ -106,6 +111,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var storage: FirebaseStorage
     private lateinit var progressStore: SharedPreferences
 
     private lateinit var mainRoot: FrameLayout
@@ -154,6 +160,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var txtStreakBadge: TextView
     private lateinit var txtProfileAverageScore: TextView
     private lateinit var btnProfileMusicToggle: TextView
+    private lateinit var btnProfileEditName: TextView
     private lateinit var profilePhotoButton: View
     private lateinit var imgProfilePhoto: ImageView
     private lateinit var txtProfileRankBadge: TextView
@@ -239,6 +246,7 @@ class MainActivity : AppCompatActivity() {
     private var lastLoginDate = ""
     private var streakWasBrokenRecently = false
     private var lastChallengePlayedAt = 0L
+    private var lastNameEditMonth = ""
 
     private val lessonLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -280,7 +288,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val profilePhotoPicker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+    private val profilePhotoPicker = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let { saveProfilePhoto(it) }
     }
 
@@ -371,6 +379,7 @@ class MainActivity : AppCompatActivity() {
         isGuestMode = intent.getBooleanExtra(LoginActivity.EXTRA_GUEST_MODE, false)
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
+        storage = FirebaseStorage.getInstance()
         progressStore = getSharedPreferences("algoplay_local_progress", MODE_PRIVATE)
 
         bindViews()
@@ -446,6 +455,7 @@ class MainActivity : AppCompatActivity() {
         txtStreakBadge = findViewById(R.id.txtStreakBadge)
         txtProfileAverageScore = findViewById(R.id.txtProfileAverageScore)
         btnProfileMusicToggle = findViewById(R.id.btnProfileMusicToggle)
+        btnProfileEditName = findViewById(R.id.btnProfileEditName)
         profilePhotoButton = findViewById(R.id.profilePhotoButton)
         imgProfilePhoto = findViewById(R.id.imgProfilePhoto)
         txtProfileRankBadge = findViewById(R.id.txtProfileRankBadge)
@@ -569,6 +579,7 @@ class MainActivity : AppCompatActivity() {
             homeActivityGames,
             homeActivityLeaderboard,
             btnProfileMusicToggle,
+            btnProfileEditName,
             txtDetailAction
         ).forEach { it.enableTapFeedback() }
         cardViews.forEach { it.enableTapFeedback() }
@@ -582,10 +593,14 @@ class MainActivity : AppCompatActivity() {
             if (isGuestMode) {
                 showLoginRequiredDialog("Login untuk mengatur foto profil.")
             } else {
-                profilePhotoPicker.launch(arrayOf("image/*"))
+                profilePhotoPicker.launch("image/*")
             }
         }
         btnProfileMusicToggle.setOnClickListener { toggleBacksound() }
+        btnProfileEditName.setOnClickListener {
+            if (isGuestMode) showLoginRequiredDialog("Login untuk mengubah nama profil.")
+            else showEditNameDialog()
+        }
         homeActivityMateri.setOnClickListener { selectTab(MainTab.MATERI) }
         homeActivityFlowchart.setOnClickListener { showFlowchartDialog() }
         homeActivityGames.setOnClickListener { selectTab(MainTab.LATIHAN) }
@@ -753,8 +768,12 @@ class MainActivity : AppCompatActivity() {
         resetWeeklyLeaderboardIfNeeded()
         val rank = scoreRank(totalScore)
         val userRef = firestore.collection("users").document(uid)
-        val nameData = (auth.currentUser?.displayName ?: userName.takeUnless { it == "Teman" || it.isBlank() })
+        val nameData = (userName.takeUnless { it == "Teman" || it.isBlank() } ?: auth.currentUser?.displayName)
             ?.let { mapOf("name" to it) }
+            ?: emptyMap()
+        val photoData = userPhotoUrl
+            ?.takeIf { it.isNotBlank() }
+            ?.let { mapOf("photoUrl" to it, "profilePhoto" to it) }
             ?: emptyMap()
         val data = mapOf(
             "uid" to uid,
@@ -775,20 +794,21 @@ class MainActivity : AppCompatActivity() {
             "lastLoginDate" to lastLoginDate,
             "streakWasBrokenRecently" to streakWasBrokenRecently,
             "lastChallengePlayedAt" to lastChallengePlayedAt,
+            "lastNameEditMonth" to lastNameEditMonth,
             "profilePhotoLocalUri" to (userLocalPhotoUri?.toString() ?: ""),
             "materialCompleteBadgeUnlocked" to materialCompleteBadgeUnlocked,
             "updatedAt" to FieldValue.serverTimestamp()
         )
 
         userRef.set(
-            data + nameData + mapOf(
+            data + nameData + photoData + mapOf(
                 "totalScoreLeaderboard" to totalScore
             ),
             SetOptions.merge()
         )
             .addOnFailureListener {
                 userRef.set(
-                    data + nameData + mapOf(
+                    data + nameData + photoData + mapOf(
                         "totalScoreLeaderboard" to totalScore
                     ),
                     SetOptions.merge()
@@ -1012,6 +1032,12 @@ class MainActivity : AppCompatActivity() {
                     userName = document.getString("name") ?: userName
                     userPhotoUrl = documentPhotoPath(document) ?: userPhotoUrl
                     userLevel = (document.getLong("level") ?: 1L).toInt()
+                    document.getString("lastNameEditMonth")?.takeIf { it.isNotBlank() }?.let { remoteMonth ->
+                        lastNameEditMonth = remoteMonth
+                        progressStore.edit()
+                            .putString(scopedProgressKey(currentProgressScope(), KEY_LAST_NAME_EDIT_MONTH), remoteMonth)
+                            .apply()
+                    }
                 }
                 loadLeaderboardData()
                 selectTab(currentTab, shouldScroll = false)
@@ -1035,6 +1061,7 @@ class MainActivity : AppCompatActivity() {
         lastLoginDate = ""
         streakWasBrokenRecently = false
         lastChallengePlayedAt = 0L
+        lastNameEditMonth = ""
         materialCompleteBadgeUnlocked = false
         isMusicMuted = progressStore.getBoolean(KEY_MUSIC_MUTED, false)
         if (isGuestMode) {
@@ -1085,6 +1112,7 @@ class MainActivity : AppCompatActivity() {
         lastLoginDate = progressStore.getString(scopedProgressKey(scope, KEY_LAST_LOGIN_DATE), null).orEmpty()
         streakWasBrokenRecently = progressStore.getBoolean(scopedProgressKey(scope, KEY_STREAK_BROKEN_RECENTLY), false)
         lastChallengePlayedAt = progressStore.getLong(scopedProgressKey(scope, KEY_LAST_CHALLENGE_PLAYED_AT), 0L)
+        lastNameEditMonth = progressStore.getString(scopedProgressKey(scope, KEY_LAST_NAME_EDIT_MONTH), null).orEmpty()
         finalExamScore = progressStore.getInt(scopedProgressKey(scope, KEY_FINAL_EXAM_SCORE), 0)
         userLocalPhotoUri = progressStore.getString(scopedProgressKey(scope, KEY_PROFILE_PHOTO_URI), null)
             ?.let { Uri.parse(it) }
@@ -1109,6 +1137,7 @@ class MainActivity : AppCompatActivity() {
             .putString(scopedProgressKey(scope, KEY_LAST_LOGIN_DATE), lastLoginDate)
             .putBoolean(scopedProgressKey(scope, KEY_STREAK_BROKEN_RECENTLY), streakWasBrokenRecently)
             .putLong(scopedProgressKey(scope, KEY_LAST_CHALLENGE_PLAYED_AT), lastChallengePlayedAt)
+            .putString(scopedProgressKey(scope, KEY_LAST_NAME_EDIT_MONTH), lastNameEditMonth)
             .putInt(scopedProgressKey(scope, KEY_FINAL_EXAM_SCORE), finalExamScore)
             .putString(scopedProgressKey(scope, KEY_LAST_CONTINUE_TYPE), lastContinueType)
             .putString(scopedProgressKey(scope, KEY_LAST_CONTINUE_KEY), lastContinueKey)
@@ -1145,6 +1174,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun todayDateKey(): String {
         return LocalDate.now(ZoneId.systemDefault()).toString()
+    }
+
+    private fun currentMonthKey(): String {
+        return todayDateKey().take(7)
     }
 
     private fun currentWeekKey(): String {
@@ -1258,10 +1291,165 @@ class MainActivity : AppCompatActivity() {
             .apply()
         if (!isGuestMode) {
             saveLocalProgress()
+            uploadProfilePhotoToFirebase(uri)
         }
         updateProfilePhoto()
         updateHomeProfilePhoto()
-        Toast.makeText(this, "Foto profil diperbarui", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Foto profil dipilih. Mengunggah ke Firebase...", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun uploadProfilePhotoToFirebase(uri: Uri) {
+        val uid = auth.currentUser?.uid
+        if (uid.isNullOrBlank()) {
+            Toast.makeText(this, "Login dulu untuk upload foto profil.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val photoRef = storage.reference.child("profile_photos/$uid/profile.jpg")
+        photoRef.putFile(uri)
+            .addOnSuccessListener {
+                photoRef.downloadUrl
+                    .addOnSuccessListener { downloadUri ->
+                        val downloadUrl = downloadUri.toString()
+                        userPhotoUrl = downloadUrl
+                        auth.currentUser?.updateProfile(
+                            UserProfileChangeRequest.Builder()
+                                .setPhotoUri(downloadUri)
+                                .build()
+                        )
+                        firestore.collection("users").document(uid)
+                            .set(
+                                mapOf(
+                                    "photoUrl" to downloadUrl,
+                                    "profilePhoto" to downloadUrl,
+                                    "profilePhotoLocalUri" to (userLocalPhotoUri?.toString() ?: ""),
+                                    "updatedAt" to FieldValue.serverTimestamp()
+                                ),
+                                SetOptions.merge()
+                            )
+                            .addOnSuccessListener {
+                                updateProfilePhoto()
+                                updateHomeProfilePhoto()
+                                loadLeaderboardData()
+                                Toast.makeText(this, "Foto profil tersimpan ke Firebase.", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this, "Foto tampil lokal, tapi URL belum tersimpan ke database.", Toast.LENGTH_LONG).show()
+                            }
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Upload selesai, tapi URL foto gagal dibuat.", Toast.LENGTH_LONG).show()
+                    }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Upload foto gagal. Cek Firebase Storage/rules.", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    private fun showEditNameDialog() {
+        val monthKey = currentMonthKey()
+        if (lastNameEditMonth == monthKey) {
+            Toast.makeText(this, "Nama sudah diedit bulan ini. Bisa edit lagi bulan depan.", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val input = EditText(this).apply {
+            setText(userName)
+            setSelection(text.length)
+            hint = "Nama baru"
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
+            filters = arrayOf(InputFilter.LengthFilter(24))
+            setSingleLine(true)
+            setPadding(dp(14), dp(10), dp(14), dp(10))
+            background = roundedStrokeDrawable(
+                ContextCompat.getColor(this@MainActivity, R.color.white),
+                ContextCompat.getColor(this@MainActivity, R.color.algoplay_blue_soft),
+                dp(16)
+            )
+        }
+
+        val wrapper = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(20), dp(8), dp(20), dp(4))
+            addView(createCompactText("Nama hanya bisa diperbaiki 1 kali setiap bulan.", 12, R.color.algoplay_subtext, false, Gravity.START))
+            addView(input, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(52)).apply {
+                topMargin = dp(12)
+            })
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Edit nama profil")
+            .setView(wrapper)
+            .setNegativeButton("Batal", null)
+            .setPositiveButton("Simpan") { _, _ ->
+                updateUserNameOncePerMonth(input.text.toString().trim())
+            }
+            .show()
+    }
+
+    private fun updateUserNameOncePerMonth(newName: String) {
+        if (newName.length < 3) {
+            Toast.makeText(this, "Nama minimal 3 huruf.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (newName.equals(userName, ignoreCase = false)) {
+            Toast.makeText(this, "Nama masih sama.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val uid = auth.currentUser?.uid
+        if (uid.isNullOrBlank()) {
+            Toast.makeText(this, "Login dulu untuk mengubah nama.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val monthKey = currentMonthKey()
+        val userRef = firestore.collection("users").document(uid)
+        userRef.get()
+            .addOnSuccessListener { document ->
+                val remoteMonth = document.getString("lastNameEditMonth").orEmpty()
+                if (remoteMonth == monthKey) {
+                    lastNameEditMonth = remoteMonth
+                    progressStore.edit()
+                        .putString(scopedProgressKey(currentProgressScope(), KEY_LAST_NAME_EDIT_MONTH), remoteMonth)
+                        .apply()
+                    updateProfileNameButton()
+                    Toast.makeText(this, "Nama sudah diedit bulan ini. Bisa edit lagi bulan depan.", Toast.LENGTH_LONG).show()
+                    return@addOnSuccessListener
+                }
+
+                userRef.set(
+                    mapOf(
+                        "name" to newName,
+                        "lastNameEditMonth" to monthKey,
+                        "updatedAt" to FieldValue.serverTimestamp()
+                    ),
+                    SetOptions.merge()
+                )
+                    .addOnSuccessListener {
+                        userName = newName
+                        lastNameEditMonth = monthKey
+                        auth.currentUser?.updateProfile(
+                            UserProfileChangeRequest.Builder()
+                                .setDisplayName(newName)
+                                .build()
+                        )
+                        progressStore.edit()
+                            .putString(scopedProgressKey(currentProgressScope(), KEY_LAST_NAME_EDIT_MONTH), monthKey)
+                            .apply()
+                        saveLocalProgress()
+                        updateHomeStatusBar()
+                        updateProfileDashboard()
+                        loadLeaderboardData()
+                        Toast.makeText(this, "Nama berhasil diperbarui.", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Nama gagal disimpan. Cek koneksi/Firebase.", Toast.LENGTH_LONG).show()
+                    }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Gagal mengecek batas edit nama.", Toast.LENGTH_LONG).show()
+            }
     }
 
     private fun selectTab(tab: MainTab, shouldScroll: Boolean = true) {
@@ -2183,6 +2371,7 @@ class MainActivity : AppCompatActivity() {
 
         txtProfileGreeting.text = userName
         txtProfileRankBadge.text = "Tingkat ${rank.level} - ${rank.status}"
+        updateProfileNameButton()
         updateProfileBadges(rank)
         txtProfileProgressCaption.text = "Selesai ${completedLessons.size} dari ${lessons.size} materi"
         txtProfileProgressPercent.text = "$materialProgress%"
@@ -2200,6 +2389,15 @@ class MainActivity : AppCompatActivity() {
         renderProfileTrainingStats(modeStats)
         updateProfilePhoto()
         updateMusicToggle()
+    }
+
+    private fun updateProfileNameButton() {
+        if (!::btnProfileEditName.isInitialized) return
+        val canEdit = !isGuestMode && lastNameEditMonth != currentMonthKey()
+        btnProfileEditName.text = if (canEdit) "Edit nama" else "Edit nama bulan depan"
+        btnProfileEditName.setTextColor(
+            ContextCompat.getColor(this, if (canEdit) R.color.algoplay_blue_dark else R.color.algoplay_subtext)
+        )
     }
 
     private fun updateProfileBadges(rank: ScoreRank) {
@@ -2555,7 +2753,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun documentPhotoPath(document: DocumentSnapshot): String? {
-        return listOf("photoUrl", "photoURL", "profileImage", "profilePhoto", "profilePhotoLocalUri")
+        return listOf("photoUrl", "photoURL", "profileImage", "profilePhoto")
             .firstNotNullOfOrNull { key -> document.getString(key)?.takeIf { it.isNotBlank() } }
     }
 
@@ -3148,6 +3346,7 @@ class MainActivity : AppCompatActivity() {
         private const val KEY_LAST_LOGIN_DATE = "last_login_date"
         private const val KEY_STREAK_BROKEN_RECENTLY = "streak_broken_recently"
         private const val KEY_LAST_CHALLENGE_PLAYED_AT = "last_challenge_played_at"
+        private const val KEY_LAST_NAME_EDIT_MONTH = "last_name_edit_month"
         private const val KEY_FINAL_EXAM_SCORE = "final_exam_score"
         private const val KEY_PROFILE_PHOTO_URI = "profile_photo_uri"
         private const val KEY_LAST_CONTINUE_TYPE = "last_continue_type"
