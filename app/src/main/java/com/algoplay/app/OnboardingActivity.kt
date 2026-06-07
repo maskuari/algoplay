@@ -24,6 +24,7 @@ class OnboardingActivity : AppCompatActivity() {
 
         animateAlbi()
 
+        btnStartAdventure.enableTapFeedback()
         btnStartAdventure.setOnClickListener {
             FirebaseAuth.getInstance().currentUser?.uid?.let { uid ->
                 getSharedPreferences(PREF_ONBOARDING, MODE_PRIVATE)

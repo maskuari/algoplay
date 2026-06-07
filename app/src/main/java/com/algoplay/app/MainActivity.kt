@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -17,11 +18,11 @@ import android.os.Looper
 import android.view.Gravity
 import android.view.View
 import android.view.animation.OvershootInterpolator
-import android.widget.PopupMenu
 import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
@@ -30,8 +31,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import java.net.URL
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
+import java.time.temporal.WeekFields
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -69,7 +77,14 @@ class MainActivity : AppCompatActivity() {
         val iconBgRes: Int,
         val note: String,
         val isCurrentUser: Boolean = false,
-        val photoUrl: String? = null
+        val photoUrl: String? = null,
+        val materialCompleteBadge: Boolean = false,
+        val totalScore: Int = score,
+        val completedLessonsCount: Int = 0,
+        val completedActivitiesCount: Int = 0,
+        val loginStreakCount: Int = 0,
+        val streakWasBroken: Boolean = false,
+        val trainingScores: Map<String, Int> = emptyMap()
     )
 
     private data class ScoreRank(
@@ -138,6 +153,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var txtRewardScore: TextView
     private lateinit var txtStreakBadge: TextView
     private lateinit var txtProfileAverageScore: TextView
+    private lateinit var btnProfileMusicToggle: TextView
     private lateinit var profilePhotoButton: View
     private lateinit var imgProfilePhoto: ImageView
     private lateinit var txtProfileRankBadge: TextView
@@ -177,6 +193,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var homeRankBadge: LinearLayout
     private lateinit var txtHomeRankLevel: TextView
     private lateinit var txtHomeRankStatus: TextView
+    private lateinit var imgHomeLevelBadge: ImageView
+    private lateinit var btnHomeMenu: ImageView
     private lateinit var txtHomeAccuracy: TextView
     private lateinit var txtHomeStreak: TextView
     private lateinit var txtHomeLeaderboardRank: TextView
@@ -204,8 +222,23 @@ class MainActivity : AppCompatActivity() {
     private var lastContinueType: String? = null
     private var lastContinueKey: String? = null
     private var finalExamScore = 0
+    private var isMusicMuted = false
+    private var materialCompleteBadgeUnlocked = false
+    private var backsoundPlayer: MediaPlayer? = null
+    private var firebaseLeaderboardEntries: List<LeaderboardEntry> = emptyList()
+    private var isLoadingLeaderboard = false
     private val completedLessons = mutableSetOf<Int>()
     private val completedActivities = mutableSetOf<String>()
+    private val trainingBestScores = mutableMapOf<String, Int>()
+    private val trainingAttemptsToday = mutableMapOf<String, Int>()
+    private var trainingAttemptsDate = ""
+    private var trainingLifetimeScore = 0
+    private var weeklyLeaderboardScore = 0
+    private var leaderboardWeekKey = ""
+    private var loginStreakCount = 0
+    private var lastLoginDate = ""
+    private var streakWasBrokenRecently = false
+    private var lastChallengePlayedAt = 0L
 
     private val lessonLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -226,13 +259,23 @@ class MainActivity : AppCompatActivity() {
             val mode = result.data?.getStringExtra(PuzzleSymbolActivity.EXTRA_TRAINING_MODE).orEmpty()
             val score = result.data?.getIntExtra(PuzzleSymbolActivity.EXTRA_SESSION_SCORE, 0) ?: 0
             val correct = result.data?.getIntExtra(PuzzleSymbolActivity.EXTRA_CORRECT_ANSWER, 0) ?: 0
+            val difficulty = result.data?.getStringExtra(PuzzleSymbolActivity.EXTRA_DIFFICULTY).orEmpty()
+            val explicitAward = if (result.data?.hasExtra(PuzzleSymbolActivity.EXTRA_AWARDED_POINTS) == true) {
+                result.data?.getIntExtra(PuzzleSymbolActivity.EXTRA_AWARDED_POINTS, 0)
+            } else {
+                null
+            }
             if (mode.isNotBlank()) {
+                trainingBestScores[mode] = maxOf(trainingBestScores[mode] ?: 0, score)
+                completedActivities.add(mode)
+                lastContinueType = CONTINUE_LATIHAN
+                lastContinueKey = mode
+                val award = recordTrainingAward(mode, score, difficulty, explicitAward)
                 if (!isGuestMode) {
-                    completedActivities.add(mode)
+                    saveLocalProgress()
                 }
-                saveContinueTarget(CONTINUE_LATIHAN, mode)
                 updateContent(MainTab.LATIHAN)
-                Toast.makeText(this, "Latihan selesai: $correct benar, skor $score.", Toast.LENGTH_SHORT).show()
+                showTrainingScorePopup(mode, score, award, correct)
             }
         }
     }
@@ -312,17 +355,18 @@ class MainActivity : AppCompatActivity() {
         get() = (completedActivities.size * 25).coerceAtMost(100)
 
     private val trainingTotalScore: Int
-        get() = trainingModeStats().sumOf { it.bestScore }
+        get() = trainingLifetimeScore
 
     private val materialScore: Int
-        get() = completedLessons.count { it != FINAL_EXAM_LESSON_NUMBER } * LESSON_SCORE_REWARD
+        get() = completedLessons.size * LESSON_SCORE_REWARD
 
     private val totalScore: Int
-        get() = materialScore + trainingTotalScore + finalExamScore
+        get() = materialScore + trainingTotalScore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        preloadAlgoSounds()
 
         isGuestMode = intent.getBooleanExtra(LoginActivity.EXTRA_GUEST_MODE, false)
         auth = FirebaseAuth.getInstance()
@@ -331,6 +375,8 @@ class MainActivity : AppCompatActivity() {
 
         bindViews()
         loadLocalProgress()
+        recordDailyLoginIfNeeded()
+        maybeUnlockMaterialCompleteBadge()
         setupNavigation()
         setupCardActions()
         loadUserData()
@@ -339,11 +385,18 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         clockHandler.post(homeClockTicker)
+        startBacksoundIfNeeded()
     }
 
     override fun onPause() {
         clockHandler.removeCallbacks(homeClockTicker)
+        pauseBacksound()
         super.onPause()
+    }
+
+    override fun onDestroy() {
+        releaseBacksound()
+        super.onDestroy()
     }
 
     private fun bindViews() {
@@ -392,6 +445,7 @@ class MainActivity : AppCompatActivity() {
         txtRewardScore = findViewById(R.id.txtRewardScore)
         txtStreakBadge = findViewById(R.id.txtStreakBadge)
         txtProfileAverageScore = findViewById(R.id.txtProfileAverageScore)
+        btnProfileMusicToggle = findViewById(R.id.btnProfileMusicToggle)
         profilePhotoButton = findViewById(R.id.profilePhotoButton)
         imgProfilePhoto = findViewById(R.id.imgProfilePhoto)
         txtProfileRankBadge = findViewById(R.id.txtProfileRankBadge)
@@ -431,6 +485,8 @@ class MainActivity : AppCompatActivity() {
         homeRankBadge = findViewById(R.id.homeRankBadge)
         txtHomeRankLevel = findViewById(R.id.txtHomeRankLevel)
         txtHomeRankStatus = findViewById(R.id.txtHomeRankStatus)
+        imgHomeLevelBadge = findViewById(R.id.imgHomeLevelBadge)
+        btnHomeMenu = findViewById(R.id.btnHomeMenu)
         txtHomeAccuracy = findViewById(R.id.txtHomeAccuracy)
         txtHomeStreak = findViewById(R.id.txtHomeStreak)
         txtHomeLeaderboardRank = findViewById(R.id.txtHomeLeaderboardRank)
@@ -492,23 +548,36 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigation() {
+        navItems.values.forEach { it.enableTapFeedback() }
         navItems[MainTab.HOME]?.setOnClickListener { selectTab(MainTab.HOME) }
         navItems[MainTab.MATERI]?.setOnClickListener { selectTab(MainTab.MATERI) }
         navItems[MainTab.LATIHAN]?.setOnClickListener { selectTab(MainTab.LATIHAN) }
         navItems[MainTab.LEADERBOARD]?.setOnClickListener { selectTab(MainTab.LEADERBOARD) }
         navItems[MainTab.PROFIL]?.setOnClickListener { selectTab(MainTab.PROFIL) }
-
-        navItems[MainTab.PROFIL]?.setOnLongClickListener {
-            openAccountMenu(navItems[MainTab.PROFIL] ?: bottomNavFallback())
-            true
-        }
     }
 
     private fun setupCardActions() {
+        listOf(
+            btnHomeContinue,
+            btnHomeChallenge,
+            homeChallengeCard,
+            homeProfileMenuButton,
+            btnHomeMenu,
+            profilePhotoButton,
+            homeActivityMateri,
+            homeActivityFlowchart,
+            homeActivityGames,
+            homeActivityLeaderboard,
+            btnProfileMusicToggle,
+            txtDetailAction
+        ).forEach { it.enableTapFeedback() }
+        cardViews.forEach { it.enableTapFeedback() }
+
         btnHomeContinue.setOnClickListener { continueLearning() }
         btnHomeChallenge.setOnClickListener { openChallengeFromHome() }
         homeChallengeCard.setOnClickListener { openChallengeFromHome() }
-        homeProfileMenuButton.setOnClickListener { openAccountMenu(homeProfileMenuButton) }
+        homeProfileMenuButton.setOnClickListener { if (!isGuestMode) selectTab(MainTab.PROFIL) else showLoginRequiredDialog("Login untuk membuka profil dan menyimpan progress.") }
+        btnHomeMenu.setOnClickListener { openAccountMenu(btnHomeMenu) }
         profilePhotoButton.setOnClickListener {
             if (isGuestMode) {
                 showLoginRequiredDialog("Login untuk mengatur foto profil.")
@@ -516,6 +585,7 @@ class MainActivity : AppCompatActivity() {
                 profilePhotoPicker.launch(arrayOf("image/*"))
             }
         }
+        btnProfileMusicToggle.setOnClickListener { toggleBacksound() }
         homeActivityMateri.setOnClickListener { selectTab(MainTab.MATERI) }
         homeActivityFlowchart.setOnClickListener { showFlowchartDialog() }
         homeActivityGames.setOnClickListener { selectTab(MainTab.LATIHAN) }
@@ -536,7 +606,7 @@ class MainActivity : AppCompatActivity() {
                     MainTab.LEADERBOARD -> showCardDetail(index)
                     MainTab.PROFIL -> {
                         if (index == 3) {
-                            Toast.makeText(this, "Tahan tombol Profil di navbar untuk logout", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Buka menu burger di atas untuk ganti akun atau logout.", Toast.LENGTH_SHORT).show()
                         } else {
                             showCardDetail(index)
                         }
@@ -551,27 +621,124 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openAccountMenu(anchor: View) {
-        PopupMenu(this, anchor).apply {
-            menu.add("Logout")
-            menu.add("Ganti akun")
-            setOnMenuItemClickListener { item ->
-                when (item.title.toString()) {
-                    "Logout" -> {
-                        goToLogin()
-                        true
-                    }
-                    "Ganti akun" -> {
-                        goToLogin()
-                        true
-                    }
-                    else -> false
-                }
-            }
-            show()
+        val card = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            background = roundedStrokeDrawable(
+                ContextCompat.getColor(this@MainActivity, R.color.white),
+                Color.parseColor("#8FD2F5"),
+                dp(24)
+            )
+            elevation = dp(12).toFloat()
+            setPadding(dp(12), dp(12), dp(12), dp(10))
+        }
+
+        val rank = scoreRank(totalScore)
+        card.addView(LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            background = roundedDrawable(ContextCompat.getColor(this@MainActivity, R.color.algoplay_blue_soft), dp(18))
+            setPadding(dp(10), dp(9), dp(10), dp(9))
+
+            addView(ImageView(this@MainActivity).apply {
+                configureBadgeImage(this, levelBadgeRes(rank.level))
+            }, LinearLayout.LayoutParams(dp(42), dp(42)))
+
+            addView(LinearLayout(this@MainActivity).apply {
+                orientation = LinearLayout.VERTICAL
+                addView(createCompactText(if (isGuestMode) "Guest" else userName, 14, R.color.algoplay_text, true, Gravity.START).apply {
+                    maxLines = 1
+                    ellipsize = android.text.TextUtils.TruncateAt.END
+                })
+                addView(createCompactText("${rank.status} - $totalScore poin", 11, R.color.algoplay_subtext, false, Gravity.START).apply {
+                    maxLines = 1
+                }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                    topMargin = dp(4)
+                })
+            }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+                marginStart = dp(10)
+            })
+        }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+
+        val popup = PopupWindow(card, dp(244), LinearLayout.LayoutParams.WRAP_CONTENT, true).apply {
+            isOutsideTouchable = true
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            elevation = dp(12).toFloat()
+        }
+
+        card.addView(createAccountMenuRow(R.drawable.ic_user, "Profil", "Lihat statistik dan lencana") {
+            popup.dismiss()
+            selectTab(MainTab.PROFIL)
+        })
+        card.addView(createAccountMenuRow(R.drawable.ic_sparkle, if (isMusicMuted) "Musik: OFF" else "Musik: ON", "Atur backsound aplikasi") {
+            popup.dismiss()
+            toggleBacksound()
+        })
+        card.addView(createAccountMenuRow(
+            R.drawable.ic_google_g,
+            if (isGuestMode) "Tautkan Akun" else "Ganti akun",
+            if (isGuestMode) "Pindahkan progress guest ke akun" else "Masuk dengan akun lain"
+        ) {
+            popup.dismiss()
+            goToLogin()
+        })
+        card.addView(createAccountMenuRow(R.drawable.ic_lock, "Logout", "Keluar dari akun ini") {
+            popup.dismiss()
+            goToLogin()
+        })
+
+        popup.showAsDropDown(anchor, -dp(202), dp(8))
+    }
+
+    private fun createAccountMenuRow(iconRes: Int, title: String, caption: String, action: () -> Unit): LinearLayout {
+        return LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(10), dp(9), dp(10), dp(9))
+            background = roundedDrawable(Color.TRANSPARENT, dp(18))
+            isClickable = true
+            isFocusable = true
+            enableTapFeedback()
+            setOnClickListener { action() }
+
+            addView(ImageView(this@MainActivity).apply {
+                setImageResource(iconRes)
+                clearColorFilter()
+                setColorFilter(ContextCompat.getColor(this@MainActivity, R.color.algoplay_blue_dark))
+                scaleType = ImageView.ScaleType.FIT_CENTER
+            }, LinearLayout.LayoutParams(dp(28), dp(28)))
+
+            addView(LinearLayout(this@MainActivity).apply {
+                orientation = LinearLayout.VERTICAL
+                addView(createCompactText(title, 13, R.color.algoplay_text, true, Gravity.START))
+                addView(createCompactText(caption, 10, R.color.algoplay_subtext, false, Gravity.START).apply {
+                    maxLines = 1
+                    ellipsize = android.text.TextUtils.TruncateAt.END
+                }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                    topMargin = dp(3)
+                })
+            }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+                marginStart = dp(10)
+            })
         }
     }
 
     private fun goToLogin() {
+        if (isGuestMode) {
+            ProgressBridge.saveGuestSnapshot(
+                this,
+                completedLessons,
+                completedActivities,
+                trainingBestScores,
+                trainingLifetimeScore,
+                weeklyLeaderboardScore,
+                leaderboardWeekKey,
+                finalExamScore,
+                materialCompleteBadgeUnlocked,
+                lastContinueType,
+                lastContinueKey
+            )
+        }
+        releaseBacksound()
         if (!isGuestMode) {
             auth.signOut()
         }
@@ -579,6 +746,54 @@ class MainActivity : AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
+    }
+
+    private fun syncUserProgressToFirestore() {
+        val uid = auth.currentUser?.uid ?: return
+        resetWeeklyLeaderboardIfNeeded()
+        val rank = scoreRank(totalScore)
+        val userRef = firestore.collection("users").document(uid)
+        val nameData = (auth.currentUser?.displayName ?: userName.takeUnless { it == "Teman" || it.isBlank() })
+            ?.let { mapOf("name" to it) }
+            ?: emptyMap()
+        val data = mapOf(
+            "uid" to uid,
+            "materialScore" to materialScore,
+            "trainingLifetimeScore" to trainingLifetimeScore,
+            "trainingDisplayScore" to trainingLifetimeScore,
+            "weeklyScoreLeaderboard" to weeklyLeaderboardScore,
+            "leaderboardWeekKey" to leaderboardWeekKey,
+            "completedLessons" to completedLessons.sorted(),
+            "completedActivities" to completedActivities.sorted(),
+            "trainingBestScores" to trainingBestScores.toMap(),
+            "trainingAttemptsDate" to trainingAttemptsDate,
+            "trainingAttemptsToday" to trainingAttemptsToday.toMap(),
+            "finalExamScore" to finalExamScore,
+            "rankLevel" to rank.level,
+            "rankStatus" to rank.status,
+            "loginStreakCount" to loginStreakCount,
+            "lastLoginDate" to lastLoginDate,
+            "streakWasBrokenRecently" to streakWasBrokenRecently,
+            "lastChallengePlayedAt" to lastChallengePlayedAt,
+            "profilePhotoLocalUri" to (userLocalPhotoUri?.toString() ?: ""),
+            "materialCompleteBadgeUnlocked" to materialCompleteBadgeUnlocked,
+            "updatedAt" to FieldValue.serverTimestamp()
+        )
+
+        userRef.set(
+            data + nameData + mapOf(
+                "totalScoreLeaderboard" to totalScore
+            ),
+            SetOptions.merge()
+        )
+            .addOnFailureListener {
+                userRef.set(
+                    data + nameData + mapOf(
+                        "totalScoreLeaderboard" to totalScore
+                    ),
+                    SetOptions.merge()
+                )
+            }
     }
 
     private fun showLoginRequiredDialog(message: String) {
@@ -680,10 +895,12 @@ class MainActivity : AppCompatActivity() {
                 ContextCompat.getColor(this@MainActivity, R.color.algoplay_blue_soft),
                 dp(16)
             )
+            enableTapFeedback()
             setOnClickListener { dialog.dismiss() }
         }
         val openButton = createCompactText("Buka Materi", 14, R.color.white, true, Gravity.CENTER).apply {
             background = roundedDrawable(ContextCompat.getColor(this@MainActivity, R.color.algoplay_blue_dark), dp(16))
+            enableTapFeedback()
             setOnClickListener {
                 dialog.dismiss()
                 selectTab(MainTab.MATERI)
@@ -793,13 +1010,10 @@ class MainActivity : AppCompatActivity() {
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     userName = document.getString("name") ?: userName
-                    userPhotoUrl = document.getString("photoUrl")
-                        ?: document.getString("photoURL")
-                        ?: document.getString("profileImage")
-                        ?: document.getString("profilePhoto")
-                        ?: userPhotoUrl
+                    userPhotoUrl = documentPhotoPath(document) ?: userPhotoUrl
                     userLevel = (document.getLong("level") ?: 1L).toInt()
                 }
+                loadLeaderboardData()
                 selectTab(currentTab, shouldScroll = false)
             }
             .addOnFailureListener {
@@ -810,7 +1024,19 @@ class MainActivity : AppCompatActivity() {
     private fun loadLocalProgress() {
         completedLessons.clear()
         completedActivities.clear()
+        trainingBestScores.clear()
+        trainingAttemptsToday.clear()
         finalExamScore = 0
+        trainingLifetimeScore = 0
+        weeklyLeaderboardScore = 0
+        leaderboardWeekKey = currentWeekKey()
+        trainingAttemptsDate = todayDateKey()
+        loginStreakCount = 0
+        lastLoginDate = ""
+        streakWasBrokenRecently = false
+        lastChallengePlayedAt = 0L
+        materialCompleteBadgeUnlocked = false
+        isMusicMuted = progressStore.getBoolean(KEY_MUSIC_MUTED, false)
         if (isGuestMode) {
             userLocalPhotoUri = null
             lastContinueType = null
@@ -818,34 +1044,208 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        val scope = currentProgressScope()
         completedLessons.addAll(
-            progressStore.getString(KEY_COMPLETED_LESSONS, "")
+            progressStore.getString(scopedProgressKey(scope, KEY_COMPLETED_LESSONS), "")
                 .orEmpty()
                 .split(",")
                 .mapNotNull { it.toIntOrNull() }
         )
         completedActivities.addAll(
-            progressStore.getString(KEY_COMPLETED_ACTIVITIES, "")
+            progressStore.getString(scopedProgressKey(scope, KEY_COMPLETED_ACTIVITIES), "")
                 .orEmpty()
                 .split(",")
                 .filter { it.isNotBlank() }
         )
-        finalExamScore = progressStore.getInt(KEY_FINAL_EXAM_SCORE, 0)
-        userLocalPhotoUri = progressStore.getString(KEY_PROFILE_PHOTO_URI, null)
+        trainingBestScores.putAll(
+            parseTrainingScores(
+                progressStore.getString(scopedProgressKey(scope, KEY_TRAINING_BEST_SCORES), "").orEmpty()
+            )
+        )
+        val lifetimeScoreKey = scopedProgressKey(scope, KEY_TRAINING_LIFETIME_SCORE)
+        trainingLifetimeScore = if (progressStore.contains(lifetimeScoreKey)) {
+            progressStore.getInt(lifetimeScoreKey, 0)
+        } else {
+            trainingBestScores.values.sum()
+        }
+        weeklyLeaderboardScore = progressStore.getInt(scopedProgressKey(scope, KEY_WEEKLY_LEADERBOARD_SCORE), 0)
+        leaderboardWeekKey = progressStore.getString(scopedProgressKey(scope, KEY_LEADERBOARD_WEEK_KEY), null).orEmpty()
+        if (leaderboardWeekKey != currentWeekKey()) {
+            weeklyLeaderboardScore = 0
+            leaderboardWeekKey = currentWeekKey()
+        }
+        trainingAttemptsDate = progressStore.getString(scopedProgressKey(scope, KEY_TRAINING_ATTEMPTS_DATE), null).orEmpty()
+        trainingAttemptsToday.putAll(
+            parseTrainingScores(
+                progressStore.getString(scopedProgressKey(scope, KEY_TRAINING_ATTEMPTS_TODAY), "").orEmpty()
+            )
+        )
+        resetTrainingAttemptsIfNeeded()
+        loginStreakCount = progressStore.getInt(scopedProgressKey(scope, KEY_LOGIN_STREAK_COUNT), 0)
+        lastLoginDate = progressStore.getString(scopedProgressKey(scope, KEY_LAST_LOGIN_DATE), null).orEmpty()
+        streakWasBrokenRecently = progressStore.getBoolean(scopedProgressKey(scope, KEY_STREAK_BROKEN_RECENTLY), false)
+        lastChallengePlayedAt = progressStore.getLong(scopedProgressKey(scope, KEY_LAST_CHALLENGE_PLAYED_AT), 0L)
+        finalExamScore = progressStore.getInt(scopedProgressKey(scope, KEY_FINAL_EXAM_SCORE), 0)
+        userLocalPhotoUri = progressStore.getString(scopedProgressKey(scope, KEY_PROFILE_PHOTO_URI), null)
             ?.let { Uri.parse(it) }
-        lastContinueType = progressStore.getString(KEY_LAST_CONTINUE_TYPE, null)
-        lastContinueKey = progressStore.getString(KEY_LAST_CONTINUE_KEY, null)
+        lastContinueType = progressStore.getString(scopedProgressKey(scope, KEY_LAST_CONTINUE_TYPE), null)
+        lastContinueKey = progressStore.getString(scopedProgressKey(scope, KEY_LAST_CONTINUE_KEY), null)
+        materialCompleteBadgeUnlocked = progressStore.getBoolean(scopedProgressKey(scope, KEY_MATERIAL_COMPLETE_BADGE), false)
     }
 
     private fun saveLocalProgress() {
         if (isGuestMode) return
+        val scope = currentProgressScope()
         progressStore.edit()
-            .putString(KEY_COMPLETED_LESSONS, completedLessons.sorted().joinToString(","))
-            .putString(KEY_COMPLETED_ACTIVITIES, completedActivities.sorted().joinToString(","))
-            .putInt(KEY_FINAL_EXAM_SCORE, finalExamScore)
-            .putString(KEY_LAST_CONTINUE_TYPE, lastContinueType)
-            .putString(KEY_LAST_CONTINUE_KEY, lastContinueKey)
+            .putString(scopedProgressKey(scope, KEY_COMPLETED_LESSONS), completedLessons.sorted().joinToString(","))
+            .putString(scopedProgressKey(scope, KEY_COMPLETED_ACTIVITIES), completedActivities.sorted().joinToString(","))
+            .putString(scopedProgressKey(scope, KEY_TRAINING_BEST_SCORES), encodeTrainingScores(trainingBestScores))
+            .putInt(scopedProgressKey(scope, KEY_TRAINING_LIFETIME_SCORE), trainingLifetimeScore)
+            .putInt(scopedProgressKey(scope, KEY_WEEKLY_LEADERBOARD_SCORE), weeklyLeaderboardScore)
+            .putString(scopedProgressKey(scope, KEY_LEADERBOARD_WEEK_KEY), leaderboardWeekKey)
+            .putString(scopedProgressKey(scope, KEY_TRAINING_ATTEMPTS_DATE), trainingAttemptsDate)
+            .putString(scopedProgressKey(scope, KEY_TRAINING_ATTEMPTS_TODAY), encodeTrainingScores(trainingAttemptsToday))
+            .putInt(scopedProgressKey(scope, KEY_LOGIN_STREAK_COUNT), loginStreakCount)
+            .putString(scopedProgressKey(scope, KEY_LAST_LOGIN_DATE), lastLoginDate)
+            .putBoolean(scopedProgressKey(scope, KEY_STREAK_BROKEN_RECENTLY), streakWasBrokenRecently)
+            .putLong(scopedProgressKey(scope, KEY_LAST_CHALLENGE_PLAYED_AT), lastChallengePlayedAt)
+            .putInt(scopedProgressKey(scope, KEY_FINAL_EXAM_SCORE), finalExamScore)
+            .putString(scopedProgressKey(scope, KEY_LAST_CONTINUE_TYPE), lastContinueType)
+            .putString(scopedProgressKey(scope, KEY_LAST_CONTINUE_KEY), lastContinueKey)
+            .putBoolean(scopedProgressKey(scope, KEY_MATERIAL_COMPLETE_BADGE), materialCompleteBadgeUnlocked)
+            .putBoolean(KEY_MUSIC_MUTED, isMusicMuted)
             .apply()
+        syncUserProgressToFirestore()
+    }
+
+    private fun currentProgressScope(): String {
+        return auth.currentUser?.uid ?: "local"
+    }
+
+    private fun scopedProgressKey(scope: String, key: String): String {
+        return ProgressBridge.scopedKey(scope, key)
+    }
+
+    private fun parseTrainingScores(raw: String): Map<String, Int> {
+        return raw.split(";")
+            .mapNotNull { item ->
+                val parts = item.split("=", limit = 2)
+                val key = parts.getOrNull(0)?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+                val score = parts.getOrNull(1)?.toIntOrNull() ?: return@mapNotNull null
+                key to score.coerceAtLeast(0)
+            }
+            .toMap()
+    }
+
+    private fun encodeTrainingScores(scores: Map<String, Int>): String {
+        return scores.entries
+            .sortedBy { it.key }
+            .joinToString(";") { "${it.key}=${it.value.coerceAtLeast(0)}" }
+    }
+
+    private fun todayDateKey(): String {
+        return LocalDate.now(ZoneId.systemDefault()).toString()
+    }
+
+    private fun currentWeekKey(): String {
+        val today = LocalDate.now(ZoneId.systemDefault())
+        val weekFields = WeekFields.ISO
+        val week = today.get(weekFields.weekOfWeekBasedYear())
+        val year = today.get(weekFields.weekBasedYear())
+        return "$year-W${week.toString().padStart(2, '0')}"
+    }
+
+    private fun daysBetween(startDate: String, endDate: String): Long {
+        return runCatching {
+            ChronoUnit.DAYS.between(LocalDate.parse(startDate), LocalDate.parse(endDate))
+        }.getOrDefault(0L)
+    }
+
+    private fun recordDailyLoginIfNeeded() {
+        if (isGuestMode) return
+        val today = todayDateKey()
+        if (lastLoginDate == today) return
+
+        val gap = if (lastLoginDate.isBlank()) 0L else daysBetween(lastLoginDate, today)
+        streakWasBrokenRecently = lastLoginDate.isNotBlank() && gap > 1
+        loginStreakCount = when {
+            lastLoginDate.isBlank() -> 1
+            gap == 1L -> loginStreakCount + 1
+            gap > 1L -> 1
+            else -> loginStreakCount.coerceAtLeast(1)
+        }
+        lastLoginDate = today
+        saveLocalProgress()
+    }
+
+    private fun resetTrainingAttemptsIfNeeded() {
+        val today = todayDateKey()
+        if (trainingAttemptsDate != today) {
+            trainingAttemptsToday.clear()
+            trainingAttemptsDate = today
+        }
+    }
+
+    private fun resetWeeklyLeaderboardIfNeeded() {
+        val currentWeek = currentWeekKey()
+        if (leaderboardWeekKey != currentWeek) {
+            weeklyLeaderboardScore = 0
+            leaderboardWeekKey = currentWeek
+        }
+    }
+
+    private fun startBacksoundIfNeeded() {
+        if (isMusicMuted) {
+            updateMusicToggle()
+            return
+        }
+        if (backsoundPlayer == null) {
+            backsoundPlayer = MediaPlayer.create(this, R.raw.backsound_algoplay)?.apply {
+                isLooping = true
+                setVolume(BACKSOUND_VOLUME, BACKSOUND_VOLUME)
+            }
+        }
+        backsoundPlayer?.let { player ->
+            if (!player.isPlaying) {
+                player.start()
+            }
+        }
+        updateMusicToggle()
+    }
+
+    private fun pauseBacksound() {
+        backsoundPlayer?.takeIf { it.isPlaying }?.pause()
+    }
+
+    private fun releaseBacksound() {
+        backsoundPlayer?.release()
+        backsoundPlayer = null
+    }
+
+    private fun toggleBacksound() {
+        isMusicMuted = !isMusicMuted
+        progressStore.edit()
+            .putBoolean(KEY_MUSIC_MUTED, isMusicMuted)
+            .apply()
+        if (isMusicMuted) {
+            pauseBacksound()
+            Toast.makeText(this, "Musik dimatikan", Toast.LENGTH_SHORT).show()
+        } else {
+            startBacksoundIfNeeded()
+            Toast.makeText(this, "Musik dinyalakan", Toast.LENGTH_SHORT).show()
+        }
+        updateMusicToggle()
+    }
+
+    private fun updateMusicToggle() {
+        if (!::btnProfileMusicToggle.isInitialized) return
+        btnProfileMusicToggle.text = if (isMusicMuted) "Musik: Mati" else "Musik: Aktif"
+        btnProfileMusicToggle.setTextColor(
+            ContextCompat.getColor(this, if (isMusicMuted) R.color.algoplay_blue_dark else R.color.white)
+        )
+        btnProfileMusicToggle.setBackgroundResource(
+            if (isMusicMuted) R.drawable.bg_button_google else R.drawable.bg_button_blue
+        )
     }
 
     private fun saveProfilePhoto(uri: Uri) {
@@ -854,8 +1254,11 @@ class MainActivity : AppCompatActivity() {
         }
         userLocalPhotoUri = uri
         progressStore.edit()
-            .putString(KEY_PROFILE_PHOTO_URI, uri.toString())
+            .putString(scopedProgressKey(currentProgressScope(), KEY_PROFILE_PHOTO_URI), uri.toString())
             .apply()
+        if (!isGuestMode) {
+            saveLocalProgress()
+        }
         updateProfilePhoto()
         updateHomeProfilePhoto()
         Toast.makeText(this, "Foto profil diperbarui", Toast.LENGTH_SHORT).show()
@@ -966,8 +1369,8 @@ class MainActivity : AppCompatActivity() {
                         R.drawable.ic_star,
                         R.drawable.bg_icon_yellow,
                         "Status Leaderboard",
-                        "Leaderboard memakai total score dari semua mode latihan.",
-                        "Rank: ${homeLeaderboardRankText()}\nScore: $totalScore\nStatus: ${scoreRank(totalScore).status}",
+                        "Leaderboard memakai poin minggu berjalan dan reset setiap Senin.",
+                        "Rank: ${homeLeaderboardRankText()}\nMinggu ini: $weeklyLeaderboardScore\nTotal akun: $totalScore",
                         "Lihat Leaderboard",
                         targetTab = MainTab.LEADERBOARD
                     )
@@ -1099,6 +1502,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             MainTab.LEADERBOARD -> {
+                if (firebaseLeaderboardEntries.isEmpty()) {
+                    loadLeaderboardData()
+                }
                 txtWelcome.text = "Leaderboard"
                 txtSubtitle.text = "Lihat peringkat dan special score terbaik."
                 imgTopHeader.setImageResource(R.drawable.leaderboard)
@@ -1129,7 +1535,7 @@ class MainActivity : AppCompatActivity() {
                 imgHeroIcon.setImageResource(R.drawable.ic_user)
                 cards = listOf(
                     CardContent("${completedLessons.size} Materi", "Sudah dipelajari", R.drawable.ic_code, R.drawable.bg_icon_blue, "Materi selesai", "Kamu sudah membuka banyak topik belajar.", "Progress: $lessonProgress%\nSelesai: ${completedLessons.size}/${lessons.size}", "Lihat Materi", targetTab = MainTab.MATERI),
-                    CardContent("$totalScore Score", "Total latihan", R.drawable.ic_flow, R.drawable.bg_icon_green, "Score Latihan", "Leaderboard memakai total score dari Puzzle, Urutan, Quiz Cepat, dan Tantangan.", "Total score: $totalScore\nMode aktif: ${completedActivities.size}\nAkurasi: ${trainingModeStats().filter { it.bestScore > 0 }.averageOf { it.accuracy }}%", "Lihat Latihan", targetTab = MainTab.LATIHAN),
+                    CardContent("$totalScore Score", "Total akun", R.drawable.ic_flow, R.drawable.bg_icon_green, "Score Latihan", "Total akun tidak reset. Leaderboard mingguan memakai poin minggu berjalan.", "Total score: $totalScore\nMinggu ini: $weeklyLeaderboardScore\nMode aktif: ${completedActivities.size}", "Lihat Latihan", targetTab = MainTab.LATIHAN),
                     CardContent("Badge", "Lencana belajar", R.drawable.ic_star, R.drawable.bg_icon_yellow, "Koleksi Badge", "Badge muncul dari progress materi, leaderboard, dan tingkatan.", "Score: $totalScore\nLevel: $displayLevel\nBadge: ${currentBadge()}", "Buka Badge"),
                     CardContent("Pengaturan", "Profil dan suara", R.drawable.ic_user, R.drawable.bg_icon_purple, "Pengaturan Anak", "Nanti bagian ini bisa dipakai untuk nama profil, suara, dan tema warna.", "Nama: $userName\nMode: Anak\nTema: Cerah", "Atur Profil")
                 )
@@ -1181,13 +1587,11 @@ class MainActivity : AppCompatActivity() {
         homeProfileAvatarWrap.visibility = if (isGuestMode) View.GONE else View.VISIBLE
         txtHomeDay.text = SimpleDateFormat("EEEE", Locale("id", "ID")).format(now)
         txtHomeDateTime.text = SimpleDateFormat("d MMMM yyyy - HH:mm", Locale("id", "ID")).format(now)
-        homeRankBadge.visibility = if (isGuestMode) View.GONE else View.VISIBLE
+        homeRankBadge.visibility = View.GONE
+        imgHomeLevelBadge.visibility = if (isGuestMode) View.GONE else View.VISIBLE
         if (!isGuestMode) {
-            txtHomeRankLevel.text = "Tingkat ${rank.level}"
-            txtHomeRankStatus.text = rank.status
-            homeRankBadge.background = roundedDrawable(Color.parseColor(rank.colorHex), dp(18))
-            txtHomeRankLevel.setTextColor(ContextCompat.getColor(this, R.color.white))
-            txtHomeRankStatus.setTextColor(ContextCompat.getColor(this, R.color.white))
+            configureBadgeImage(imgHomeLevelBadge, levelBadgeRes(rank.level))
+            imgHomeLevelBadge.contentDescription = "Lencana ${rank.status}"
         }
         updateHomeProfilePhoto()
     }
@@ -1222,18 +1626,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateHomeDashboardState() {
         updateContinueCard()
-        homeChallengeCard.visibility = if (completedActivities.contains(CHALLENGE_KEY)) View.GONE else View.VISIBLE
+        val challengeRemaining = challengeCooldownRemainingMs()
+        homeChallengeCard.visibility = if (challengeRemaining > 0L) View.GONE else View.VISIBLE
         txtHomeChallengeCaption.text = if (isGuestMode) {
             "Guest bisa coba, tapi score tidak disimpan."
         } else {
-            "4 soal random siap dibuka. Score masuk total leaderboard."
+            "Tantangan bisa dikerjakan 1 kali setiap 5 jam."
         }
         txtHomeAccuracy.text = "${trainingAccuracy()}%"
         txtHomeStreak.text = "${weeklyStreak()} hari"
         txtHomeLeaderboardRank.text = if (isGuestMode) {
             "Login untuk rank"
         } else {
-            "Rank ${homeLeaderboardRankText()} - $totalScore score"
+            "Rank ${homeLeaderboardRankText()} - $weeklyLeaderboardScore poin minggu ini"
         }
     }
 
@@ -1295,6 +1700,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun openTrainingMode(index: Int) {
         val card = currentCards.getOrNull(index) ?: return
+        playAlgoSound(AlgoSound.PILIH)
         when (card.rewardKey) {
             PUZZLE_SYMBOL_KEY -> openPuzzleSymbolPage()
             SEQUENCE_ORDER_KEY -> openSequenceOrderPage()
@@ -1325,8 +1731,83 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openChallengePage() {
+        val remaining = challengeCooldownRemainingMs()
+        if (remaining > 0L) {
+            Toast.makeText(this, "Tantangan bisa dimainkan lagi dalam ${formatCooldown(remaining)}.", Toast.LENGTH_LONG).show()
+            return
+        }
         saveContinueTarget(CONTINUE_LATIHAN, CHALLENGE_KEY)
         trainingLauncher.launch(Intent(this, ChallengeActivity::class.java))
+    }
+
+    private fun challengeCooldownRemainingMs(): Long {
+        if (lastChallengePlayedAt <= 0L) return 0L
+        val elapsed = System.currentTimeMillis() - lastChallengePlayedAt
+        return (CHALLENGE_COOLDOWN_MS - elapsed).coerceAtLeast(0L)
+    }
+
+    private fun formatCooldown(milliseconds: Long): String {
+        val totalMinutes = (milliseconds / 60_000L).coerceAtLeast(1L)
+        val hours = totalMinutes / 60L
+        val minutes = totalMinutes % 60L
+        return if (hours > 0L) "${hours}j ${minutes}m" else "${minutes}m"
+    }
+
+    private fun recordTrainingAward(mode: String, score: Int, difficultyKey: String, explicitAward: Int? = null): Int {
+        if (mode == CHALLENGE_KEY) {
+            lastChallengePlayedAt = System.currentTimeMillis()
+        }
+        if (isGuestMode) return 0
+        resetWeeklyLeaderboardIfNeeded()
+
+        val baseScore = score.coerceAtLeast(0)
+        val bonus = if (baseScore >= 100) {
+            when (difficultyKey) {
+                PuzzleDifficulty.MEDIUM.key -> 20
+                PuzzleDifficulty.HARD.key -> 50
+                else -> 0
+            }
+        } else {
+            0
+        }
+
+        val awarded = if (mode == CHALLENGE_KEY) {
+            baseScore
+        } else if (explicitAward != null) {
+            resetTrainingAttemptsIfNeeded()
+            val currentAttempt = trainingAttemptsToday[mode] ?: 0
+            trainingAttemptsToday[mode] = currentAttempt + 1
+            explicitAward.coerceAtLeast(0)
+        } else {
+            resetTrainingAttemptsIfNeeded()
+            val currentAttempt = trainingAttemptsToday[mode] ?: 0
+            trainingAttemptsToday[mode] = currentAttempt + 1
+            if (currentAttempt < MAX_DAILY_TRAINING_REWARDED_ATTEMPT) baseScore + bonus else 0
+        }
+
+        if (awarded > 0) {
+            trainingLifetimeScore += awarded
+            weeklyLeaderboardScore += awarded
+        }
+        return awarded
+    }
+
+    private fun showTrainingScorePopup(mode: String, score: Int, awarded: Int, correct: Int) {
+        val modeName = trainingModeStats().firstOrNull { it.key == mode }?.title ?: "Latihan"
+        showBriefResultPopup(
+            title = "Nilai $score",
+            message = if (isGuestMode) {
+                "$modeName selesai: $correct benar. Login untuk menyimpan poin."
+            } else if (awarded > 0) {
+                "$modeName selesai. +$awarded poin masuk total dan leaderboard minggu ini."
+            } else {
+                "$modeName selesai. Percobaan hari ini sudah habis, poin leaderboard +0."
+            },
+            imageRes = R.drawable.sorakan_leaderboard,
+            success = true,
+            soundEffect = AlgoSound.SELESAI,
+            durationMs = 1400L
+        )
     }
 
     private fun nextLessonNumber(): Int {
@@ -1348,11 +1829,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun weeklyStreak(): Int {
-        return if (completedLessons.isEmpty() && completedActivities.isEmpty()) {
-            0
-        } else {
-            (1 + (completedLessons.size / 2) + completedActivities.size).coerceAtMost(7)
-        }
+        return loginStreakCount.coerceAtLeast(0)
     }
 
     private fun homeLeaderboardRankText(): String {
@@ -1476,6 +1953,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Materi ini masih terkunci", Toast.LENGTH_SHORT).show()
             }
         }
+        row.enableTapFeedback()
 
         return row
     }
@@ -1498,6 +1976,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (lessonActivity != null) {
+            playAlgoSound(AlgoSound.PILIH)
             val intent = Intent(this, lessonActivity).apply {
                 putExtra(LessonOneActivity.EXTRA_GUEST_MODE, isGuestMode)
                 putExtra(LessonOneActivity.EXTRA_USER_NAME, if (isGuestMode) "Guest" else userName)
@@ -1515,6 +1994,11 @@ class MainActivity : AppCompatActivity() {
     private fun markLessonCompletedFromPage(lessonNumber: Int) {
         val wasNew = completedLessons.add(lessonNumber)
         saveContinueTarget(CONTINUE_MATERI, (lessonNumber + 1).coerceAtMost(lessons.size).toString())
+        if (!isGuestMode && wasNew) {
+            resetWeeklyLeaderboardIfNeeded()
+            weeklyLeaderboardScore += LESSON_SCORE_REWARD
+        }
+        maybeUnlockMaterialCompleteBadge()
         if (!isGuestMode && wasNew) {
             saveLocalProgress()
         }
@@ -1540,19 +2024,111 @@ class MainActivity : AppCompatActivity() {
 
         if (!isGuestMode) {
             finalExamScore = maxOf(finalExamScore, normalizedScore)
+            if (wasNew) {
+                resetWeeklyLeaderboardIfNeeded()
+                weeklyLeaderboardScore += LESSON_SCORE_REWARD
+            }
+            maybeUnlockMaterialCompleteBadge()
             if (wasNew || finalExamScore != oldExamScore) {
                 saveLocalProgress()
             }
+        } else {
+            maybeUnlockMaterialCompleteBadge()
         }
 
         updateContent(MainTab.MATERI)
         val message = when {
             isGuestMode -> "Simulasi ujian selesai. Login untuk menyimpan nilai."
-            finalExamScore > oldExamScore -> "Ujian selesai! Score ujian bertambah ${finalExamScore - oldExamScore}."
-            wasNew -> "Ujian selesai! Nilai terbaikmu $finalExamScore."
+            wasNew -> "Materi 12 selesai! +$LESSON_SCORE_REWARD score. Nilai ujian terbaikmu $finalExamScore."
+            finalExamScore > oldExamScore -> "Nilai ujian terbaik diperbarui menjadi $finalExamScore."
             else -> "Nilai ujian terbaik tetap $finalExamScore."
         }
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun maybeUnlockMaterialCompleteBadge() {
+        if (materialCompleteBadgeUnlocked || completedLessons.size < lessons.size) return
+        materialCompleteBadgeUnlocked = true
+        if (!isGuestMode) saveLocalProgress()
+        showMaterialCompleteBadgeDialog()
+    }
+
+    private fun showMaterialCompleteBadgeDialog() {
+        playAlgoSound(AlgoSound.SELESAI)
+        val dialog = Dialog(this)
+        dialog.setCancelable(false)
+
+        val root = FrameLayout(this).apply {
+            setPadding(dp(24), 0, dp(24), 0)
+        }
+        val card = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER_HORIZONTAL
+            background = roundedDrawable(ContextCompat.getColor(this@MainActivity, R.color.white), dp(28))
+            elevation = dp(12).toFloat()
+            setPadding(dp(20), dp(18), dp(20), dp(18))
+            alpha = 0f
+            scaleX = 0.92f
+            scaleY = 0.92f
+        }
+        root.addView(card, FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.CENTER
+        ))
+
+        card.addView(ImageView(this).apply {
+            setImageResource(R.drawable.len_complete)
+            adjustViewBounds = true
+            scaleType = ImageView.ScaleType.FIT_CENTER
+        }, LinearLayout.LayoutParams(dp(128), dp(128)))
+
+        card.addView(createCompactText("Lencana Baru!", 22, R.color.algoplay_text, true, Gravity.CENTER), LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            topMargin = dp(10)
+        })
+        card.addView(createCompactText(
+            "Kamu sudah menyelesaikan semua materi dan mendapatkan lencana Complete.",
+            13,
+            R.color.algoplay_subtext,
+            false,
+            Gravity.CENTER
+        ), LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            topMargin = dp(8)
+        })
+
+        val okButton = createCompactText("OK", 15, R.color.white, true, Gravity.CENTER).apply {
+            background = roundedDrawable(ContextCompat.getColor(this@MainActivity, R.color.algoplay_green_dark), dp(18))
+            setPadding(dp(22), dp(11), dp(22), dp(11))
+            setOnClickListener { dialog.dismiss() }
+            enableTapFeedback()
+        }
+        card.addView(okButton, LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            topMargin = dp(18)
+        })
+
+        dialog.setContentView(root)
+        dialog.setOnShowListener {
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.window?.setDimAmount(0.25f)
+            dialog.window?.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            card.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(220L)
+                .setInterpolator(OvershootInterpolator(1.04f))
+                .start()
+        }
+        dialog.show()
     }
 
     private fun handleDetailAction() {
@@ -1614,7 +2190,7 @@ class MainActivity : AppCompatActivity() {
         txtAccuracy.text = "$accuracy%"
         txtRewardScore.text = totalScore.toString()
         txtProfileAverageScore.text = averageScore.toString()
-        txtStreakBadge.text = "$weeklyStreak/7 aktif"
+        txtStreakBadge.text = if (streakWasBrokenRecently) "Streak diulang - $weeklyStreak hari" else "$weeklyStreak hari aktif"
         txtProfileModes.text = "${completedActivities.size}/4"
         txtProfileLessons.text = "${completedLessons.size}/${lessons.size}"
         txtProfileActivities.text = highScore.toString()
@@ -1623,25 +2199,30 @@ class MainActivity : AppCompatActivity() {
         renderStreakWeek(weeklyStreak)
         renderProfileTrainingStats(modeStats)
         updateProfilePhoto()
+        updateMusicToggle()
     }
 
     private fun updateProfileBadges(rank: ScoreRank) {
         val leaderboardRank = leaderboardEntries().indexOfFirst { it.isCurrentUser } + 1
-        imgProfileLeaderboardBadge.alpha = if (leaderboardRank in 1..10) 1f else 0.38f
-        imgProfileLeaderboardBadge.contentDescription = when (leaderboardRank) {
-            1 -> "Lencana juara leaderboard 1"
-            2 -> "Lencana leaderboard peringkat 2"
-            3 -> "Lencana leaderboard peringkat 3"
-            in 4..10 -> "Lencana leaderboard top 10"
-            else -> "Lencana leaderboard belum terbuka"
+        val leaderboardBadge = leaderboardBadgeRes(leaderboardRank)
+        imgProfileLeaderboardBadge.visibility = if (leaderboardBadge == null) View.GONE else View.VISIBLE
+        leaderboardBadge?.let {
+            configureBadgeImage(imgProfileLeaderboardBadge, it)
+            imgProfileLeaderboardBadge.contentDescription = when (leaderboardRank) {
+                1 -> "Lencana juara leaderboard top 1"
+                2 -> "Lencana leaderboard top 2"
+                3 -> "Lencana leaderboard top 3"
+                in 4..5 -> "Lencana leaderboard top 5"
+                else -> "Lencana leaderboard top 10"
+            }
         }
-        imgProfileMaterialBadge.alpha = if (completedLessons.isNotEmpty()) 1f else 0.48f
-        imgProfileMaterialBadge.contentDescription = if (completedLessons.size >= lessons.size) {
-            "Lencana materi tuntas"
-        } else {
-            "Lencana materi ${completedLessons.size} dari ${lessons.size}"
+        imgProfileMaterialBadge.visibility = if (materialCompleteBadgeUnlocked) View.VISIBLE else View.GONE
+        if (materialCompleteBadgeUnlocked) {
+            configureBadgeImage(imgProfileMaterialBadge, R.drawable.len_complete)
+            imgProfileMaterialBadge.contentDescription = "Lencana complete semua materi"
         }
-        imgProfileLevelBadge.alpha = 1f
+        imgProfileLevelBadge.visibility = View.VISIBLE
+        configureBadgeImage(imgProfileLevelBadge, levelBadgeRes(rank.level))
         imgProfileLevelBadge.contentDescription = "Lencana tingkat ${rank.level} ${rank.status}"
     }
 
@@ -1651,16 +2232,21 @@ class MainActivity : AppCompatActivity() {
 
         days.forEachIndexed { index, day ->
             val isActive = index < activeDays
+            val isMissed = streakWasBrokenRecently && !isActive
             val dayView = createCompactText(
                 day,
                 11,
-                if (isActive) R.color.white else R.color.algoplay_subtext,
+                if (isActive) R.color.white else if (isMissed) R.color.algoplay_red_dark else R.color.algoplay_subtext,
                 isActive,
                 Gravity.CENTER
             ).apply {
                 background = ContextCompat.getDrawable(
                     this@MainActivity,
-                    if (isActive) R.drawable.bg_streak_done else R.drawable.bg_streak_empty
+                    when {
+                        isActive -> R.drawable.bg_streak_done
+                        isMissed -> R.drawable.bg_streak_missed
+                        else -> R.drawable.bg_streak_empty
+                    }
                 )
             }
             profileStreakWeek.addView(
@@ -1778,14 +2364,14 @@ class MainActivity : AppCompatActivity() {
         )
 
         return baseStats.mapIndexed { index, stat ->
-            if (!completedActivities.contains(stat.key)) {
+            val bestScore = trainingBestScores[stat.key] ?: 0
+            if (bestScore <= 0) {
                 stat
             } else {
                 val accuracy = (76 + (completedLessons.size / 2) + (index * 4)).coerceAtMost(98)
-                val average = ((stat.maxScore * (72 + accuracy)) / 170).coerceAtMost(stat.maxScore)
                 stat.copy(
-                    bestScore = stat.maxScore,
-                    averageScore = average,
+                    bestScore = bestScore,
+                    averageScore = bestScore,
                     accuracy = accuracy
                 )
             }
@@ -1810,7 +2396,7 @@ class MainActivity : AppCompatActivity() {
             shape = GradientDrawable.RECTANGLE
             cornerRadius = radius.toFloat()
             setColor(fillColor)
-            setStroke(dp(1), strokeColor)
+            setStroke(dp(2), strokeColor)
         }
     }
 
@@ -1904,26 +2490,147 @@ class MainActivity : AppCompatActivity() {
                 entry.iconBgRes,
                 if (entry.isCurrentUser) "Peringkat Kamu" else "Peringkat ${index + 1}",
                 "${entry.note}. Kumpulkan total score dari Puzzle, Urutan, Quiz Cepat, dan Tantangan.",
-                "Score: ${entry.score}\nTingkat: ${scoreRank(entry.score).status}\nBadge: ${if (entry.isCurrentUser) currentBadge() else "Challenger"}",
+                "Score minggu ini: ${entry.score}\nTotal score: ${entry.totalScore}\nTingkat: ${scoreRank(entry.totalScore).status}",
                 if (entry.isCurrentUser) "Mulai Game" else "Coba Kejar",
                 targetTab = MainTab.LATIHAN
             )
         }
     }
 
+    private fun loadLeaderboardData() {
+        if (isGuestMode || isLoadingLeaderboard) return
+        isLoadingLeaderboard = true
+        val currentUid = auth.currentUser?.uid
+
+        firestore.collection("users")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                firebaseLeaderboardEntries = snapshot.documents.map { document ->
+                    val score = leaderboardScoreFromDocument(document)
+                    val lifetimeScore = (document.getLong("totalScoreLeaderboard")
+                        ?: document.getLong("trainingDisplayScore")
+                        ?: document.getLong("trainingLifetimeScore")
+                        ?: score.toLong()).toInt().coerceAtLeast(0)
+                    val completedLessonCount = (document.get("completedLessons") as? List<*>)?.size ?: 0
+                    val completedActivityCount = (document.get("completedActivities") as? List<*>)?.size ?: 0
+                    LeaderboardEntry(
+                        name = document.getString("name") ?: document.getString("email") ?: "Teman",
+                        score = score,
+                        iconRes = R.drawable.ic_user,
+                        iconBgRes = R.drawable.bg_score_blue,
+                        note = "Score dari akun Firebase",
+                        isCurrentUser = document.id == currentUid,
+                        photoUrl = documentPhotoPath(document),
+                        materialCompleteBadge = document.getBoolean("materialCompleteBadgeUnlocked") == true,
+                        totalScore = lifetimeScore,
+                        completedLessonsCount = completedLessonCount,
+                        completedActivitiesCount = completedActivityCount,
+                        loginStreakCount = (document.getLong("loginStreakCount") ?: 0L).toInt().coerceAtLeast(0),
+                        streakWasBroken = document.getBoolean("streakWasBrokenRecently") == true,
+                        trainingScores = trainingScoresFromDocument(document)
+                    )
+                }
+                    .sortedWith(
+                        compareByDescending<LeaderboardEntry> { it.score }
+                            .thenBy { if (it.isCurrentUser) 0 else 1 }
+                    )
+                    .take(10)
+                    .mapIndexed { index, entry -> entry.copy(iconBgRes = leaderboardIconBg(index)) }
+                isLoadingLeaderboard = false
+                if (currentTab == MainTab.LEADERBOARD || currentTab == MainTab.PROFIL || currentTab == MainTab.HOME) {
+                    updateContent(currentTab)
+                }
+            }
+            .addOnFailureListener {
+                isLoadingLeaderboard = false
+            }
+    }
+
+    private fun leaderboardScoreFromDocument(document: DocumentSnapshot): Int {
+        return if (document.getString("leaderboardWeekKey") == currentWeekKey()) {
+            (document.getLong("weeklyScoreLeaderboard") ?: 0L).toInt().coerceAtLeast(0)
+        } else {
+            0
+        }
+    }
+
+    private fun documentPhotoPath(document: DocumentSnapshot): String? {
+        return listOf("photoUrl", "photoURL", "profileImage", "profilePhoto", "profilePhotoLocalUri")
+            .firstNotNullOfOrNull { key -> document.getString(key)?.takeIf { it.isNotBlank() } }
+    }
+
+    private fun trainingScoresFromDocument(document: DocumentSnapshot): Map<String, Int> {
+        val raw = document.get("trainingBestScores") as? Map<*, *> ?: return emptyMap()
+        return raw.mapNotNull { (key, value) ->
+            val score = when (value) {
+                is Number -> value.toInt()
+                is String -> value.toIntOrNull()
+                else -> null
+            } ?: return@mapNotNull null
+            key?.toString()?.takeIf { it.isNotBlank() }?.let { it to score.coerceAtLeast(0) }
+        }.toMap()
+    }
+
+    private fun leaderboardIconBg(index: Int): Int {
+        return when (index % 4) {
+            0 -> R.drawable.bg_score_orange
+            1 -> R.drawable.bg_score_blue
+            2 -> R.drawable.bg_score_purple
+            else -> R.drawable.bg_score_green
+        }
+    }
+
     private fun leaderboardEntries(): List<LeaderboardEntry> {
+        if (firebaseLeaderboardEntries.isNotEmpty()) {
+            val hasCurrentUser = firebaseLeaderboardEntries.any { it.isCurrentUser }
+            return if (hasCurrentUser || isGuestMode) {
+                firebaseLeaderboardEntries
+            } else {
+                (firebaseLeaderboardEntries + LeaderboardEntry(
+                    name = userName,
+                    score = weeklyLeaderboardScore,
+                    iconRes = R.drawable.ic_user,
+                    iconBgRes = R.drawable.bg_score_blue,
+                    note = "Progress akun kamu",
+                    isCurrentUser = true,
+                    photoUrl = userPhotoUrl ?: userLocalPhotoUri?.toString(),
+                    materialCompleteBadge = materialCompleteBadgeUnlocked,
+                    totalScore = totalScore,
+                    completedLessonsCount = completedLessons.size,
+                    completedActivitiesCount = completedActivities.size,
+                    loginStreakCount = weeklyStreak(),
+                    streakWasBroken = streakWasBrokenRecently,
+                    trainingScores = trainingBestScores.toMap()
+                )).sortedByDescending { it.score }.take(10)
+            }
+        }
         return listOf(
-            LeaderboardEntry("Raden", 6120, R.drawable.ic_user, R.drawable.bg_score_orange, "Kuat di Tantangan Harian"),
-            LeaderboardEntry("Albi", 5380, R.drawable.ic_user, R.drawable.bg_score_blue, "Akurat di Urutan Langkah"),
-            LeaderboardEntry("Naya", 4860, R.drawable.ic_user, R.drawable.bg_score_purple, "Cepat memahami materi"),
-            LeaderboardEntry("Bima", 4320, R.drawable.ic_user, R.drawable.bg_score_green, "Rajin menyelesaikan puzzle"),
+            LeaderboardEntry("Raden", 6120, R.drawable.ic_user, R.drawable.bg_score_orange, "Kuat di Tantangan Harian", materialCompleteBadge = true),
+            LeaderboardEntry("Albi", 5380, R.drawable.ic_user, R.drawable.bg_score_blue, "Akurat di Urutan Langkah", materialCompleteBadge = true),
+            LeaderboardEntry("Naya", 4860, R.drawable.ic_user, R.drawable.bg_score_purple, "Cepat memahami materi", materialCompleteBadge = true),
+            LeaderboardEntry("Bima", 4320, R.drawable.ic_user, R.drawable.bg_score_green, "Rajin menyelesaikan puzzle", materialCompleteBadge = true),
             LeaderboardEntry("Cika", 3760, R.drawable.ic_user, R.drawable.bg_score_purple, "Jago quiz cepat"),
             LeaderboardEntry("Dimas", 3180, R.drawable.ic_user, R.drawable.bg_score_blue, "Teliti di simbol flowchart"),
             LeaderboardEntry("Salsa", 2520, R.drawable.ic_user, R.drawable.bg_score_orange, "Kuat di challenge"),
             LeaderboardEntry("Mika", 1780, R.drawable.ic_user, R.drawable.bg_score_green, "Rapi menyusun langkah"),
             LeaderboardEntry("Gilang", 820, R.drawable.ic_user, R.drawable.bg_score_blue, "Mulai naik peringkat"),
             LeaderboardEntry("Tara", 320, R.drawable.ic_user, R.drawable.bg_score_green, "Baru masuk leaderboard"),
-            LeaderboardEntry(userName, totalScore, R.drawable.ic_user, R.drawable.bg_score_blue, "Progress lokal kamu", true, userPhotoUrl)
+            LeaderboardEntry(
+                name = userName,
+                score = weeklyLeaderboardScore,
+                iconRes = R.drawable.ic_user,
+                iconBgRes = R.drawable.bg_score_blue,
+                note = "Progress lokal kamu",
+                isCurrentUser = true,
+                photoUrl = userPhotoUrl ?: userLocalPhotoUri?.toString(),
+                materialCompleteBadge = materialCompleteBadgeUnlocked,
+                totalScore = totalScore,
+                completedLessonsCount = completedLessons.size,
+                completedActivitiesCount = completedActivities.size,
+                loginStreakCount = weeklyStreak(),
+                streakWasBroken = streakWasBrokenRecently,
+                trainingScores = trainingBestScores.toMap()
+            )
         ).sortedWith(
             compareByDescending<LeaderboardEntry> { it.score }
                 .thenBy { if (it.isCurrentUser) 0 else 1 }
@@ -1965,7 +2672,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createPodiumCard(entry: LeaderboardEntry, rank: Int): View {
-        val rankInfo = scoreRank(entry.score)
+        val rankInfo = scoreRank(entry.totalScore)
         val card = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
@@ -1983,6 +2690,10 @@ class MainActivity : AppCompatActivity() {
             )
             elevation = if (rank == 1) 4f else 2f
             setPadding(dp(8), dp(10), dp(8), dp(10))
+            isClickable = true
+            isFocusable = true
+            enableTapFeedback()
+            setOnClickListener { showLeaderboardUserDetail(entry, rank) }
         }
 
         card.addView(createCompactText("#$rank", 13, R.color.algoplay_text, true, Gravity.CENTER))
@@ -2004,12 +2715,15 @@ class MainActivity : AppCompatActivity() {
         }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
             topMargin = dp(3)
         })
+        card.addView(createBadgeStrip(entry, rank, 20), LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, dp(22)).apply {
+            topMargin = dp(7)
+        })
 
         return card
     }
 
     private fun createLeaderboardRow(entry: LeaderboardEntry, rank: Int): View {
-        val rankInfo = scoreRank(entry.score)
+        val rankInfo = scoreRank(entry.totalScore)
         val row = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
@@ -2019,6 +2733,10 @@ class MainActivity : AppCompatActivity() {
             )
             elevation = if (entry.isCurrentUser) 4f else 2f
             setPadding(dp(12), dp(8), dp(12), dp(8))
+            isClickable = true
+            isFocusable = true
+            enableTapFeedback()
+            setOnClickListener { showLeaderboardUserDetail(entry, rank) }
         }
 
         row.addView(createCompactText("#$rank", 14, R.color.algoplay_text, true, Gravity.CENTER), LinearLayout.LayoutParams(dp(38), LinearLayout.LayoutParams.MATCH_PARENT))
@@ -2037,6 +2755,9 @@ class MainActivity : AppCompatActivity() {
             maxLines = 1
         }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
             topMargin = dp(4)
+        })
+        textGroup.addView(createBadgeStrip(entry, rank, 18), LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, dp(20)).apply {
+            topMargin = dp(5)
         })
         row.addView(textGroup, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f).apply {
             marginStart = dp(10)
@@ -2059,10 +2780,176 @@ class MainActivity : AppCompatActivity() {
         return row
     }
 
+    private fun showLeaderboardUserDetail(entry: LeaderboardEntry, rank: Int) {
+        val dialog = Dialog(this)
+        val rankInfo = scoreRank(entry.totalScore)
+        val headerTextColor = if (rankInfo.level in listOf(3, 4, 5, 6, 7, 8)) R.color.white else R.color.algoplay_text
+        val displayName = if (entry.isCurrentUser) "Kamu" else entry.name
+        val completedLessons = entry.completedLessonsCount.coerceIn(0, lessons.size)
+        val materialProgress = if (lessons.isEmpty()) 0 else (completedLessons * 100) / lessons.size
+        val highScore = entry.trainingScores.values.maxOrNull() ?: 0
+        val averageScore = if (entry.trainingScores.isEmpty()) 0 else entry.trainingScores.values.sum() / entry.trainingScores.size
+
+        val scroll = ScrollView(this).apply {
+            isFillViewport = false
+            setPadding(dp(16), dp(16), dp(16), dp(16))
+        }
+        val card = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            background = roundedStrokeDrawable(
+                ContextCompat.getColor(this@MainActivity, R.color.white),
+                Color.parseColor("#7BCBF4"),
+                dp(28)
+            )
+            elevation = dp(10).toFloat()
+            setPadding(dp(16), dp(16), dp(16), dp(14))
+        }
+        scroll.addView(card, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT))
+
+        val header = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            background = gradientDrawable(
+                Color.parseColor(rankInfo.colorHex),
+                Color.WHITE,
+                dp(24)
+            )
+            setPadding(dp(14), dp(14), dp(14), dp(14))
+        }
+        header.addView(createAvatar(entry, 72), LinearLayout.LayoutParams(dp(72), dp(72)))
+        header.addView(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(createCompactText(displayName, 20, headerTextColor, true, Gravity.START).apply {
+                maxLines = 1
+                ellipsize = android.text.TextUtils.TruncateAt.END
+            })
+            addView(createCompactText("Peringkat #$rank minggu ini", 12, headerTextColor, false, Gravity.START).apply {
+                alpha = 0.86f
+            }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                topMargin = dp(5)
+            })
+            addView(createBadgeStrip(entry, rank, 30), LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, dp(34)).apply {
+                topMargin = dp(10)
+            })
+        }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+            marginStart = dp(14)
+        })
+        card.addView(header, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+
+        card.addView(createCompactText("Detail Belajar", 16, R.color.algoplay_text, true, Gravity.START), LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+            topMargin = dp(16)
+        })
+        card.addView(createLeaderboardDetailGrid(
+            listOf(
+                "Total Score" to entry.totalScore.toString(),
+                "Minggu Ini" to entry.score.toString(),
+                "Tingkatan" to "Tingkat ${rankInfo.level} - ${rankInfo.status}",
+                "Materi" to "$completedLessons/${lessons.size} ($materialProgress%)",
+                "Streak" to if (entry.streakWasBroken) "Diulang - ${entry.loginStreakCount} hari" else "${entry.loginStreakCount} hari",
+                "Best Latihan" to highScore.toString()
+            )
+        ), LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+            topMargin = dp(10)
+        })
+
+        card.addView(createCompactText("Statistik Latihan", 16, R.color.algoplay_text, true, Gravity.START), LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+            topMargin = dp(16)
+        })
+        listOf(
+            PUZZLE_SYMBOL_KEY to "Puzzle Simbol",
+            SEQUENCE_ORDER_KEY to "Urutan Langkah",
+            QUICK_QUIZ_KEY to "Quiz Cepat",
+            CHALLENGE_KEY to "Tantangan"
+        ).forEach { (key, label) ->
+            val score = entry.trainingScores[key] ?: 0
+            card.addView(createLeaderboardTrainingRow(label, score), LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(48)).apply {
+                topMargin = dp(8)
+            })
+        }
+
+        card.addView(createCompactText("Rata-rata latihan: $averageScore", 12, R.color.algoplay_subtext, false, Gravity.START), LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+            topMargin = dp(12)
+        })
+
+        card.addView(createCompactText("Tutup", 14, R.color.white, true, Gravity.CENTER).apply {
+            background = roundedDrawable(ContextCompat.getColor(this@MainActivity, R.color.algoplay_blue_dark), dp(18))
+            isClickable = true
+            isFocusable = true
+            enableTapFeedback()
+            setOnClickListener { dialog.dismiss() }
+        }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(46)).apply {
+            topMargin = dp(16)
+        })
+
+        dialog.setContentView(scroll)
+        dialog.setOnShowListener {
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.window?.setDimAmount(0.24f)
+            dialog.window?.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            card.alpha = 0f
+            card.scaleX = 0.94f
+            card.scaleY = 0.94f
+            card.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(180L)
+                .setInterpolator(OvershootInterpolator(1.02f))
+                .start()
+        }
+        dialog.show()
+    }
+
+    private fun createLeaderboardDetailGrid(items: List<Pair<String, String>>): GridLayout {
+        return GridLayout(this).apply {
+            columnCount = 2
+            items.forEachIndexed { index, (label, value) ->
+                addView(LinearLayout(this@MainActivity).apply {
+                    orientation = LinearLayout.VERTICAL
+                    background = roundedDrawable(ContextCompat.getColor(this@MainActivity, R.color.algoplay_bg), dp(16))
+                    setPadding(dp(10), dp(9), dp(10), dp(9))
+                    addView(createCompactText(label, 10, R.color.algoplay_subtext, true, Gravity.START))
+                    addView(createCompactText(value, 13, R.color.algoplay_text, true, Gravity.START).apply {
+                        maxLines = 1
+                        ellipsize = android.text.TextUtils.TruncateAt.END
+                    }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                        topMargin = dp(5)
+                    })
+                }, GridLayout.LayoutParams().apply {
+                    width = 0
+                    height = GridLayout.LayoutParams.WRAP_CONTENT
+                    columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                    setMargins(
+                        if (index % 2 == 0) 0 else dp(5),
+                        dp(5),
+                        if (index % 2 == 0) dp(5) else 0,
+                        dp(5)
+                    )
+                })
+            }
+        }
+    }
+
+    private fun createLeaderboardTrainingRow(title: String, score: Int): LinearLayout {
+        return LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            background = roundedStrokeDrawable(
+                ContextCompat.getColor(this@MainActivity, R.color.white),
+                ContextCompat.getColor(this@MainActivity, R.color.algoplay_blue_soft),
+                dp(16)
+            )
+            setPadding(dp(12), dp(7), dp(12), dp(7))
+            addView(createCompactText(title, 13, R.color.algoplay_text, true, Gravity.CENTER_VERTICAL), LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f))
+            addView(createCompactText(score.toString(), 14, R.color.algoplay_blue_dark, true, Gravity.CENTER_VERTICAL or Gravity.END), LinearLayout.LayoutParams(dp(66), LinearLayout.LayoutParams.MATCH_PARENT))
+        }
+    }
+
     private fun createAvatar(entry: LeaderboardEntry, size: Int): FrameLayout {
         val avatar = FrameLayout(this).apply {
             background = ContextCompat.getDrawable(this@MainActivity, R.drawable.bg_profile_avatar)
             setPadding(dp(4), dp(4), dp(4), dp(4))
+            clipToOutline = true
         }
         val imageView = ImageView(this).apply {
             setImageResource(entry.iconRes)
@@ -2073,8 +2960,70 @@ class MainActivity : AppCompatActivity() {
             }
         }
         avatar.addView(imageView, FrameLayout.LayoutParams(dp(size - 8), dp(size - 8), Gravity.CENTER))
-        entry.photoUrl?.takeIf { it.isNotBlank() }?.let { loadRemotePhoto(it, imageView) }
+        val photoPath = if (entry.isCurrentUser) {
+            userLocalPhotoUri?.toString() ?: entry.photoUrl
+        } else {
+            entry.photoUrl
+        }
+        photoPath?.takeIf { it.isNotBlank() }?.let { loadProfileImage(it, imageView) }
         return avatar
+    }
+
+    private fun createBadgeStrip(entry: LeaderboardEntry, rank: Int, iconSize: Int = 22): LinearLayout {
+        return LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+
+            val badges = buildList {
+                leaderboardBadgeRes(rank)?.let { add(it) }
+                if (entry.materialCompleteBadge) add(R.drawable.len_complete)
+                add(levelBadgeRes(scoreRank(entry.totalScore).level))
+            }.take(3)
+
+            badges.forEachIndexed { index, badgeRes ->
+                addView(ImageView(this@MainActivity).apply {
+                    configureBadgeImage(this, badgeRes)
+                }, LinearLayout.LayoutParams(dp(iconSize), dp(iconSize)).apply {
+                    if (index > 0) marginStart = dp(4)
+                })
+            }
+        }
+    }
+
+    private fun leaderboardBadgeRes(rank: Int): Int? {
+        return when (rank) {
+            1 -> R.drawable.len_top1
+            2 -> R.drawable.len_top2
+            3 -> R.drawable.len_top3
+            in 4..5 -> R.drawable.len_top5
+            in 6..10 -> R.drawable.len_top10
+            else -> null
+        }
+    }
+
+    private fun levelBadgeRes(level: Int): Int {
+        return when (level) {
+            10 -> R.drawable.len_legend
+            9 -> R.drawable.len_grandmaster
+            8 -> R.drawable.len_master
+            7 -> R.drawable.len_expert
+            6 -> R.drawable.len_strategist
+            5 -> R.drawable.len_problemsolver
+            4 -> R.drawable.len_challenger
+            3 -> R.drawable.len_explorer
+            2 -> R.drawable.len_learner
+            else -> R.drawable.len_beginner
+        }
+    }
+
+    private fun configureBadgeImage(target: ImageView, resId: Int) {
+        target.clearColorFilter()
+        target.imageTintList = null
+        target.background = null
+        target.setPadding(0, 0, 0, 0)
+        target.adjustViewBounds = true
+        target.scaleType = ImageView.ScaleType.FIT_CENTER
+        target.setImageResource(resId)
     }
 
     private fun loadRemotePhoto(photoUrl: String, target: ImageView) {
@@ -2090,6 +3039,22 @@ class MainActivity : AppCompatActivity() {
                     target.scaleType = ImageView.ScaleType.CENTER_CROP
                 }
             }
+        }
+    }
+
+    private fun loadProfileImage(path: String, target: ImageView) {
+        if (path.startsWith("content://")) {
+            runCatching {
+                target.clearColorFilter()
+                target.imageTintList = null
+                target.setImageURI(Uri.parse(path))
+                target.scaleType = ImageView.ScaleType.CENTER_CROP
+            }.onFailure {
+                target.setImageResource(R.drawable.ic_user)
+                target.setColorFilter(ContextCompat.getColor(this, R.color.algoplay_blue_dark))
+            }
+        } else {
+            loadRemotePhoto(path, target)
         }
     }
 
@@ -2173,10 +3138,22 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val KEY_COMPLETED_LESSONS = "completed_lessons"
         private const val KEY_COMPLETED_ACTIVITIES = "completed_activities"
+        private const val KEY_TRAINING_BEST_SCORES = "training_best_scores"
+        private const val KEY_TRAINING_LIFETIME_SCORE = "training_lifetime_score"
+        private const val KEY_WEEKLY_LEADERBOARD_SCORE = "weekly_leaderboard_score"
+        private const val KEY_LEADERBOARD_WEEK_KEY = "leaderboard_week_key"
+        private const val KEY_TRAINING_ATTEMPTS_DATE = "training_attempts_date"
+        private const val KEY_TRAINING_ATTEMPTS_TODAY = "training_attempts_today"
+        private const val KEY_LOGIN_STREAK_COUNT = "login_streak_count"
+        private const val KEY_LAST_LOGIN_DATE = "last_login_date"
+        private const val KEY_STREAK_BROKEN_RECENTLY = "streak_broken_recently"
+        private const val KEY_LAST_CHALLENGE_PLAYED_AT = "last_challenge_played_at"
         private const val KEY_FINAL_EXAM_SCORE = "final_exam_score"
         private const val KEY_PROFILE_PHOTO_URI = "profile_photo_uri"
         private const val KEY_LAST_CONTINUE_TYPE = "last_continue_type"
         private const val KEY_LAST_CONTINUE_KEY = "last_continue_key"
+        private const val KEY_MATERIAL_COMPLETE_BADGE = "material_complete_badge"
+        private const val KEY_MUSIC_MUTED = "music_muted"
         private const val CONTINUE_MATERI = "materi"
         private const val CONTINUE_LATIHAN = "latihan"
         private const val PUZZLE_SYMBOL_KEY = "puzzle_symbol"
@@ -2186,5 +3163,8 @@ class MainActivity : AppCompatActivity() {
         private const val FINAL_EXAM_LESSON_NUMBER = 12
         private const val LESSON_SCORE_REWARD = 100
         private const val CLOCK_REFRESH_MS = 30_000L
+        private const val BACKSOUND_VOLUME = 0.12f
+        private const val MAX_DAILY_TRAINING_REWARDED_ATTEMPT = 2
+        private const val CHALLENGE_COOLDOWN_MS = 5 * 60 * 60 * 1000L
     }
 }

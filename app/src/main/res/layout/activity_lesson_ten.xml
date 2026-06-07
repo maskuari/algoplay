@@ -265,16 +265,10 @@
                     style="@style/LessonSectionTitle"
                     android:text="Flowchart Pengulangan" />
 
-                <TextView
-                    style="@style/LessonBodyText"
-                    android:layout_marginTop="8dp"
-                    android:text="Contoh: Robot Algo harus melompat 3 kali." />
-
-                <TextView
-                    style="@style/LessonBodyText"
-                    android:layout_marginTop="10dp"
-                    android:typeface="monospace"
-                    android:text="[MULAI]\n|\n[Hitungan = 1]\n|\n[Apakah hitungan &lt;= 3?]\n| IYA\n[Lompat]\n|\n[Tambah hitungan]\n|\nKembali ke pertanyaan\n| TIDAK\n[SELESAI]" />
+                <ImageView
+                    style="@style/LessonIllustration"
+                    android:contentDescription="Flowchart pengulangan"
+                    android:src="@drawable/materi10_flowchartperulangan" />
 
                 <TextView
                     style="@style/LessonBodyText"

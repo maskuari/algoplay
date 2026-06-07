@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 
 class LoginActivity : AppCompatActivity() {
 
@@ -92,10 +93,12 @@ class LoginActivity : AppCompatActivity() {
         btnLogin.setOnClickListener {
             loginUser()
         }
+        btnLogin.enableTapFeedback()
 
         btnGoogleLogin.setOnClickListener {
             signInWithGoogle()
         }
+        btnGoogleLogin.enableTapFeedback()
 
         btnGuestLogin.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
@@ -103,14 +106,17 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+        btnGuestLogin.enableTapFeedback()
 
         btnTogglePassword.setOnClickListener {
             togglePasswordVisibility()
         }
+        btnTogglePassword.enableTapFeedback()
 
         txtGoRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
+        txtGoRegister.enableTapFeedback()
     }
 
     private fun setupGoogleLogin() {
@@ -163,13 +169,14 @@ class LoginActivity : AppCompatActivity() {
             "email" to (user.email ?: ""),
             "level" to 1,
             "stars" to 0,
+            "totalScoreLeaderboard" to 0,
             "loginProvider" to "google",
             "createdAt" to FieldValue.serverTimestamp()
         )
 
         firestore.collection("users")
             .document(user.uid)
-            .set(userData)
+            .set(userData, SetOptions.merge())
             .addOnSuccessListener {
                 showLoading(false)
                 Toast.makeText(this, "Login Google berhasil", Toast.LENGTH_SHORT).show()
@@ -256,6 +263,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun openAfterLogin(uid: String?) {
+        uid?.let { ProgressBridge.mergePendingGuestProgress(this, it) }
         val hasSeenOnboarding = uid != null &&
             getSharedPreferences(PREF_ONBOARDING, MODE_PRIVATE)
                 .getBoolean("${KEY_ONBOARDING_PREFIX}$uid", false)

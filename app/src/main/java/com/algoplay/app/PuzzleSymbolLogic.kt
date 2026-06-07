@@ -921,7 +921,6 @@ class PuzzleSymbolRepository(
                 userRef,
                 mapOf(
                     "userId" to userId,
-                    TOTAL_SCORE_LEADERBOARD_FIELD to output.totalScoreLeaderboardTerbaru,
                     PUZZLE_STATS_FIELD to output.updatedStats.toMap()
                 ),
                 SetOptions.merge()

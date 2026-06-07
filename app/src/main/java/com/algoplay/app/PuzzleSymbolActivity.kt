@@ -33,6 +33,8 @@ class PuzzleSymbolActivity : AppCompatActivity() {
     private lateinit var txtPuzzleTimer: TextView
     private lateinit var txtPuzzleDifficulty: TextView
     private lateinit var txtPuzzleTarget: TextView
+    private lateinit var imgPuzzleHero: ImageView
+    private lateinit var imgPuzzleTargetVisual: ImageView
     private lateinit var txtPuzzleQuestion: TextView
     private lateinit var txtPuzzleFeedback: TextView
     private lateinit var answerContainer: LinearLayout
@@ -52,6 +54,7 @@ class PuzzleSymbolActivity : AppCompatActivity() {
     private var isGuestMode = false
     private var userId = ""
     private var isFinishingSession = false
+    private var awardedPointsForResult = 0
     private val placedBlocks = mutableMapOf<Int, String>()
     private val draggedViews = mutableListOf<TextView>()
 
@@ -65,6 +68,7 @@ class PuzzleSymbolActivity : AppCompatActivity() {
             ?: ""
 
         bindViews()
+        btnPuzzleFinish.enableTapFeedback()
         btnPuzzleFinish.setOnClickListener { finishWithResult() }
         showLevelDialog()
     }
@@ -81,6 +85,8 @@ class PuzzleSymbolActivity : AppCompatActivity() {
         txtPuzzleTimer = findViewById(R.id.txtPuzzleTimer)
         txtPuzzleDifficulty = findViewById(R.id.txtPuzzleDifficulty)
         txtPuzzleTarget = findViewById(R.id.txtPuzzleTarget)
+        imgPuzzleHero = findViewById(R.id.imgPuzzleHero)
+        imgPuzzleTargetVisual = findViewById(R.id.imgPuzzleTargetVisual)
         txtPuzzleQuestion = findViewById(R.id.txtPuzzleQuestion)
         txtPuzzleFeedback = findViewById(R.id.txtPuzzleFeedback)
         answerContainer = findViewById(R.id.puzzleAnswerContainer)
@@ -172,6 +178,7 @@ class PuzzleSymbolActivity : AppCompatActivity() {
         }
         return textView("${level.label}\n$detail", 13, R.color.algoplay_text, true, Gravity.CENTER).apply {
             setLineSpacing(dp(2).toFloat(), 1f)
+            enableTapFeedback()
             background = roundedStrokeDrawable(
                 ContextCompat.getColor(this@PuzzleSymbolActivity, R.color.white),
                 ContextCompat.getColor(this@PuzzleSymbolActivity, R.color.algoplay_blue_soft),
@@ -190,6 +197,7 @@ class PuzzleSymbolActivity : AppCompatActivity() {
         btnPuzzleFinish.visibility = View.GONE
         txtPuzzleDifficulty.text = "Level ${difficulty.label}"
         txtPuzzleTitle.text = "Puzzle Simbol"
+        imgPuzzleHero.setImageResource(R.drawable.puzzle_latihan)
         renderQuestion()
     }
 
@@ -205,6 +213,7 @@ class PuzzleSymbolActivity : AppCompatActivity() {
         draggedViews.clear()
         txtPuzzleProgress.text = "Soal ${currentIndex + 1} dari ${questions.size}"
         txtPuzzleTarget.text = question.title
+        imgPuzzleTargetVisual.setImageResource(puzzleVisualFor(currentIndex))
         txtPuzzleQuestion.text = question.question
         txtPuzzleFeedback.visibility = View.GONE
         answerContainer.removeAllViews()
@@ -450,18 +459,22 @@ class PuzzleSymbolActivity : AppCompatActivity() {
             placedBlocks[key].equals(color, ignoreCase = true)
         }
 
-        if (isCorrect) {
-            timer?.cancel()
-            correctAnswer++
-            showFeedback("Benar! Polanya sama persis.", true)
-            answerContainer.disableChildren()
-            handler.postDelayed({ goNext() }, 850)
-        } else {
-            showFeedback(
-                if (isComplete) "Belum sama. Coba cek posisi dan warnanya lagi." else "Baloknya belum lengkap. Susun semua balok dulu.",
-                false
-            )
+        timer?.cancel()
+        if (isCorrect) correctAnswer++
+        val message = when {
+            isCorrect -> "Polanya sama persis."
+            isComplete -> "Posisi atau warnanya belum sama."
+            else -> "Baloknya belum lengkap."
         }
+        showFeedback(if (isCorrect) "Benar! $message" else "Salah. $message", isCorrect)
+        showBriefResultPopup(
+            title = if (isCorrect) "Benar!" else "Salah",
+            message = message,
+            imageRes = if (isCorrect) R.drawable.sorakan_leaderboard else R.drawable.hai_materi,
+            success = isCorrect
+        )
+        answerContainer.disableChildren()
+        handler.postDelayed({ goNext() }, 900)
     }
 
     private fun startTimer() {
@@ -473,6 +486,7 @@ class PuzzleSymbolActivity : AppCompatActivity() {
 
             override fun onFinish() {
                 txtPuzzleTimer.text = "00:00"
+                playAlgoSound(AlgoSound.SALAH)
                 showFeedback("Waktu habis. Kita lanjut ke soal berikutnya.", false)
                 answerContainer.disableChildren()
                 handler.postDelayed({ goNext() }, 900)
@@ -493,6 +507,7 @@ class PuzzleSymbolActivity : AppCompatActivity() {
         txtPuzzleTimer.text = "--:--"
         txtPuzzleProgress.text = "Selesai"
         txtPuzzleTarget.text = "Hasil"
+        imgPuzzleTargetVisual.setImageResource(R.drawable.sorakan_leaderboard)
         txtPuzzleQuestion.text = "Robot Algo sedang menghitung skor Puzzle Simbol kamu."
 
         if (isGuestMode || userId.isBlank()) {
@@ -529,8 +544,10 @@ class PuzzleSymbolActivity : AppCompatActivity() {
     private fun showResult(output: PuzzleSessionOutput, saved: Boolean) {
         resultPanel.visibility = View.VISIBLE
         btnPuzzleFinish.visibility = View.VISIBLE
+        awardedPointsForResult = output.poinLeaderboardDidapat
+        playAlgoSound(AlgoSound.SELESAI)
         imgPuzzleResult.setImageResource(if (output.jumlahBenar == 5) R.drawable.sorakan_leaderboard else R.drawable.hai_materi)
-        txtPuzzleResultTitle.text = if (output.jumlahBenar == 5) "Skor Sempurna!" else "Sesi Selesai"
+        txtPuzzleResultTitle.text = "Nilai ${output.skorSesi}"
         txtPuzzleResultDetail.text = buildString {
             append("Benar: ${output.jumlahBenar} / 5\n")
             append("Salah: ${output.jumlahSalah}\n")
@@ -551,6 +568,7 @@ class PuzzleSymbolActivity : AppCompatActivity() {
                 .putExtra(EXTRA_TRAINING_MODE, MODE_PUZZLE_SYMBOL)
                 .putExtra(EXTRA_CORRECT_ANSWER, correctAnswer)
                 .putExtra(EXTRA_SESSION_SCORE, score)
+                .putExtra(EXTRA_AWARDED_POINTS, awardedPointsForResult)
                 .putExtra(EXTRA_DIFFICULTY, difficulty.key)
         )
         finish()
@@ -562,6 +580,7 @@ class PuzzleSymbolActivity : AppCompatActivity() {
 
     private fun actionButton(value: String, primary: Boolean): TextView {
         return textView(value, 13, if (primary) R.color.white else R.color.algoplay_blue_dark, true, Gravity.CENTER).apply {
+            enableTapFeedback()
             background = if (primary) {
                 roundedDrawable(ContextCompat.getColor(this@PuzzleSymbolActivity, R.color.algoplay_green_dark), dp(16))
             } else {
@@ -613,9 +632,10 @@ class PuzzleSymbolActivity : AppCompatActivity() {
 
     private fun emptyCellDrawable(): GradientDrawable {
         return roundedStrokeDrawable(
-            ContextCompat.getColor(this, R.color.algoplay_bg),
-            ContextCompat.getColor(this, R.color.algoplay_blue_soft),
-            dp(10)
+            Color.parseColor("#E0F4FF"),
+            ContextCompat.getColor(this, R.color.algoplay_blue_dark),
+            dp(10),
+            dp(2)
         )
     }
 
@@ -651,12 +671,23 @@ class PuzzleSymbolActivity : AppCompatActivity() {
         return (value * resources.displayMetrics.density).toInt()
     }
 
+    private fun puzzleVisualFor(index: Int): Int {
+        val visuals = intArrayOf(
+            R.drawable.puzzle_latihan,
+            R.drawable.menantang_latihan,
+            R.drawable.hai_latihan,
+            R.drawable.latihan
+        )
+        return visuals[index % visuals.size]
+    }
+
     companion object {
         const val EXTRA_GUEST_MODE = "extra_guest_mode"
         const val EXTRA_USER_ID = "extra_user_id"
         const val EXTRA_TRAINING_MODE = "extra_training_mode"
         const val EXTRA_CORRECT_ANSWER = "extra_correct_answer"
         const val EXTRA_SESSION_SCORE = "extra_session_score"
+        const val EXTRA_AWARDED_POINTS = "extra_awarded_points"
         const val EXTRA_DIFFICULTY = "extra_difficulty"
         const val MODE_PUZZLE_SYMBOL = "puzzle_symbol"
     }

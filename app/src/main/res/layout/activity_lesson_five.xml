@@ -184,6 +184,11 @@
                     style="@style/LessonSectionTitle"
                     android:text="Langkah Biasa vs Pseudocode" />
 
+                <ImageView
+                    style="@style/LessonIllustration"
+                    android:contentDescription="Perbandingan langkah biasa dan pseudocode"
+                    android:src="@drawable/materi5_biasavspseudocode" />
+
                 <TextView
                     style="@style/LessonSubTitle"
                     android:layout_marginTop="12dp"

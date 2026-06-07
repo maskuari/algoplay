@@ -148,35 +148,10 @@
                     style="@style/LessonSectionTitle"
                     android:text="Contoh Langkah Berurutan" />
 
-                <TextView
-                    style="@style/LessonSubTitle"
-                    android:layout_marginTop="12dp"
-                    android:text="Menyikat Gigi" />
-
-                <TextView
-                    style="@style/LessonBodyText"
-                    android:layout_marginTop="6dp"
-                    android:text="1. Ambil sikat gigi.\n2. Beri pasta gigi.\n3. Sikat gigi.\n4. Berkumur.\n5. Simpan sikat gigi." />
-
-                <TextView
-                    style="@style/LessonSubTitle"
-                    android:layout_marginTop="14dp"
-                    android:text="Memakai Sepatu" />
-
-                <TextView
-                    style="@style/LessonBodyText"
-                    android:layout_marginTop="6dp"
-                    android:text="1. Ambil kaus kaki.\n2. Pakai kaus kaki.\n3. Ambil sepatu.\n4. Pakai sepatu.\n5. Ikat tali sepatu." />
-
-                <TextView
-                    style="@style/LessonSubTitle"
-                    android:layout_marginTop="14dp"
-                    android:text="Membuat Susu" />
-
-                <TextView
-                    style="@style/LessonBodyText"
-                    android:layout_marginTop="6dp"
-                    android:text="1. Siapkan gelas.\n2. Masukkan susu.\n3. Tuang air.\n4. Aduk sampai rata.\n5. Susu siap diminum." />
+                <ImageView
+                    style="@style/LessonIllustration"
+                    android:contentDescription="Contoh langkah berurutan"
+                    android:src="@drawable/materi1" />
 
             </LinearLayout>
 
@@ -201,7 +176,7 @@
                 <TextView
                     style="@style/LessonBodyText"
                     android:layout_marginTop="6dp"
-                    android:text="Bantu robot Algo menyusun langkah dengan benar. Tahan balok, lalu seret ke kotak nomor 1 sampai 5." />
+                    android:text="Bantu robot Algo menyusun langkah dengan benar. Geser balok ke kotak nomor 1 sampai 5." />
 
                 <LinearLayout
                     android:id="@+id/gameChoiceContainer"

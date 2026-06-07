@@ -28,6 +28,8 @@ class QuickQuizActivity : AppCompatActivity() {
     private lateinit var txtTimer: TextView
     private lateinit var txtDifficulty: TextView
     private lateinit var txtTarget: TextView
+    private lateinit var imgHero: ImageView
+    private lateinit var imgTargetVisual: ImageView
     private lateinit var txtQuestion: TextView
     private lateinit var txtFeedback: TextView
     private lateinit var answerContainer: LinearLayout
@@ -52,6 +54,7 @@ class QuickQuizActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_puzzle_symbol)
         bindViews()
+        btnFinish.enableTapFeedback()
         btnFinish.setOnClickListener { finishWithResult() }
         showLevelDialog()
     }
@@ -68,6 +71,8 @@ class QuickQuizActivity : AppCompatActivity() {
         txtTimer = findViewById(R.id.txtPuzzleTimer)
         txtDifficulty = findViewById(R.id.txtPuzzleDifficulty)
         txtTarget = findViewById(R.id.txtPuzzleTarget)
+        imgHero = findViewById(R.id.imgPuzzleHero)
+        imgTargetVisual = findViewById(R.id.imgPuzzleTargetVisual)
         txtQuestion = findViewById(R.id.txtPuzzleQuestion)
         txtFeedback = findViewById(R.id.txtPuzzleFeedback)
         answerContainer = findViewById(R.id.puzzleAnswerContainer)
@@ -127,6 +132,7 @@ class QuickQuizActivity : AppCompatActivity() {
         }
         return textView("${level.label}\n$detail", 13, R.color.algoplay_text, true, Gravity.CENTER).apply {
             setLineSpacing(dp(2).toFloat(), 1f)
+            enableTapFeedback()
             background = roundedStrokeDrawable(ContextCompat.getColor(this@QuickQuizActivity, R.color.white), ContextCompat.getColor(this@QuickQuizActivity, R.color.algoplay_blue_soft), dp(18))
         }
     }
@@ -146,6 +152,7 @@ class QuickQuizActivity : AppCompatActivity() {
         isDone = false
         txtTitle.text = "Quiz Cepat"
         txtDifficulty.text = "Level $difficultyLabel"
+        imgHero.setImageResource(R.drawable.quiz_latihan)
         resultPanel.visibility = View.GONE
         btnFinish.visibility = View.GONE
         renderQuestion()
@@ -159,7 +166,8 @@ class QuickQuizActivity : AppCompatActivity() {
         }
         val q = questions[currentIndex]
         txtProgress.text = "Soal ${currentIndex + 1} dari ${questions.size}"
-        txtTarget.text = "Pilihan Ganda"
+        txtTarget.text = "Pilih jawaban terbaik"
+        imgTargetVisual.setImageResource(quizVisualFor(q.id))
         txtQuestion.text = q.question
         txtFeedback.visibility = View.GONE
         answerContainer.removeAllViews()
@@ -178,8 +186,15 @@ class QuickQuizActivity : AppCompatActivity() {
         if (correct) correctAnswer++
         answerContainer.disableChildren()
         view.background = roundedStrokeDrawable(ContextCompat.getColor(this, R.color.white), ContextCompat.getColor(this, if (correct) R.color.algoplay_green_dark else R.color.algoplay_red_dark), dp(16))
-        showFeedback(if (correct) "Benar!" else "Belum tepat. Jawaban benar: ${q.options[q.correctIndex]}", correct)
-        handler.postDelayed({ currentIndex++; renderQuestion() }, 850)
+        val message = if (correct) "Jawabanmu tepat." else "Jawaban benar: ${q.options[q.correctIndex]}"
+        showFeedback(if (correct) "Benar! $message" else "Salah. $message", correct)
+        showBriefResultPopup(
+            title = if (correct) "Benar!" else "Salah",
+            message = message,
+            imageRes = if (correct) R.drawable.sorakan_leaderboard else R.drawable.hai_materi,
+            success = correct
+        )
+        handler.postDelayed({ currentIndex++; renderQuestion() }, 900)
     }
 
     private fun startTimer() {
@@ -187,6 +202,7 @@ class QuickQuizActivity : AppCompatActivity() {
             override fun onTick(millisUntilFinished: Long) { txtTimer.text = formatTime(millisUntilFinished) }
             override fun onFinish() {
                 txtTimer.text = "00:00"
+                playAlgoSound(AlgoSound.SALAH)
                 showFeedback("Waktu habis. Lanjut soal berikutnya.", false)
                 answerContainer.disableChildren()
                 handler.postDelayed({ currentIndex++; renderQuestion() }, 850)
@@ -199,16 +215,18 @@ class QuickQuizActivity : AppCompatActivity() {
         isDone = true
         val score = TrainingQuestionBanks.calculateQuickQuizScore(correctAnswer)
         val bonus = if (score == 100) perfectScoreBonus else 0
+        playAlgoSound(AlgoSound.SELESAI)
         timer?.cancel()
         answerContainer.removeAllViews()
         txtTimer.text = "--:--"
         txtProgress.text = "Selesai"
         txtTarget.text = "Hasil"
+        imgTargetVisual.setImageResource(R.drawable.sorakan_leaderboard)
         txtQuestion.text = "Robot Algo selesai menghitung skor Quiz Cepat."
         resultPanel.visibility = View.VISIBLE
         btnFinish.visibility = View.VISIBLE
         imgResult.setImageResource(if (correctAnswer == 10) R.drawable.sorakan_leaderboard else R.drawable.hai_materi)
-        txtResultTitle.text = if (correctAnswer == 10) "Quiz Sempurna!" else "Sesi Selesai"
+        txtResultTitle.text = "Nilai $score"
         txtResultDetail.text = "Benar: $correctAnswer / 10\nSalah: ${10 - correctAnswer}\nSkor sesi: $score\nBonus level: $bonus\nTimer berjalan per soal."
     }
 
@@ -220,7 +238,12 @@ class QuickQuizActivity : AppCompatActivity() {
     private fun optionButton(value: String) = textView(value, 13, R.color.algoplay_text, true, Gravity.CENTER_VERTICAL).apply {
         minHeight = dp(48)
         setPadding(dp(14), dp(8), dp(14), dp(8))
-        background = roundedStrokeDrawable(ContextCompat.getColor(this@QuickQuizActivity, R.color.white), ContextCompat.getColor(this@QuickQuizActivity, R.color.algoplay_blue_soft), dp(16))
+        enableTapFeedback()
+        background = roundedStrokeDrawable(
+            ContextCompat.getColor(this@QuickQuizActivity, R.color.white),
+            ContextCompat.getColor(this@QuickQuizActivity, R.color.algoplay_blue_soft),
+            dp(16)
+        )
     }
     private fun showFeedback(message: String, success: Boolean) {
         txtFeedback.visibility = View.VISIBLE
@@ -254,6 +277,18 @@ class QuickQuizActivity : AppCompatActivity() {
         setStroke(dp(1), strokeColor)
     }
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
+
+    private fun quizVisualFor(id: Int): Int {
+        val visuals = intArrayOf(
+            R.drawable.quiz_latihan,
+            R.drawable.hai_latihan,
+            R.drawable.menantang_latihan,
+            R.drawable.tantangan_latihan,
+            R.drawable.belajar_materi,
+            R.drawable.sorakan_leaderboard
+        )
+        return visuals[id % visuals.size]
+    }
 
     companion object {
         const val EXTRA_TRAINING_MODE = "extra_training_mode"

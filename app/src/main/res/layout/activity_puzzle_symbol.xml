@@ -72,6 +72,7 @@
                 </LinearLayout>
 
                 <ImageView
+                    android:id="@+id/imgPuzzleHero"
                     android:layout_width="126dp"
                     android:layout_height="126dp"
                     android:layout_gravity="end|center_vertical"
@@ -134,16 +135,28 @@
                     android:textSize="13sp"
                     android:textStyle="bold" />
 
+                <ImageView
+                    android:id="@+id/imgPuzzleTargetVisual"
+                    android:layout_width="match_parent"
+                    android:layout_height="118dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_auth_switch_panel"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Gambar mode latihan"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/puzzle_latihan" />
+
                 <TextView
                     android:id="@+id/txtPuzzleTarget"
                     android:layout_width="match_parent"
-                    android:layout_height="82dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/bg_auth_switch_panel"
                     android:gravity="center"
                     android:text="Lingkaran"
                     android:textColor="@color/algoplay_text"
-                    android:textSize="24sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView

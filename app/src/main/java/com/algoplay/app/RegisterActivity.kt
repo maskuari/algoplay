@@ -59,10 +59,12 @@ class RegisterActivity : AppCompatActivity() {
         btnRegister.setOnClickListener {
             registerUser()
         }
+        btnRegister.enableTapFeedback()
 
         txtGoLogin.setOnClickListener {
             finish()
         }
+        txtGoLogin.enableTapFeedback()
     }
 
     private fun scrollToBottom() {
@@ -131,6 +133,7 @@ class RegisterActivity : AppCompatActivity() {
             "email" to email,
             "level" to 1,
             "stars" to 0,
+            "totalScoreLeaderboard" to 0,
             "loginProvider" to "email",
             "createdAt" to FieldValue.serverTimestamp()
         )
@@ -141,6 +144,7 @@ class RegisterActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 showLoading(false)
                 Toast.makeText(this, "Akun berhasil dibuat", Toast.LENGTH_SHORT).show()
+                ProgressBridge.mergePendingGuestProgress(this, userId)
 
                 // Arahkan ke OnboardingActivity setelah sukses daftar
                 val intent = Intent(this, OnboardingActivity::class.java)

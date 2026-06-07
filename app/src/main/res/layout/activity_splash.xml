@@ -5,27 +5,94 @@
     android:layout_height="match_parent"
     android:background="@color/algoplay_splash_dark">
 
-    <TextView
-        android:id="@+id/txtSplashTitle"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:includeFontPadding="false"
-        android:text="AlgoPlay"
-        android:textColor="@color/white"
-        android:textSize="42sp"
-        android:textStyle="bold" />
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/txtSplashVersion"
+        <TextView
+            android:id="@+id/txtSplashTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:text="AlgoPlay"
+            android:textColor="@color/white"
+            android:textSize="42sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtSplashSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:includeFontPadding="false"
+            android:text="Aplikasi Belajar Algoritma"
+            android:textColor="#DDF6FF"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/splashLoadingDots"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_marginTop="18dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/splashDotOne"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:background="@drawable/bg_splash_dot_mint" />
+
+            <View
+                android:id="@+id/splashDotTwo"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="9dp"
+                android:background="@drawable/bg_splash_dot_yellow" />
+
+            <View
+                android:id="@+id/splashDotThree"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="9dp"
+                android:background="@drawable/bg_splash_dot_pink" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="34dp"
-        android:includeFontPadding="false"
-        android:text="V.0.0.1"
-        android:textColor="#DDF6FF"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+        android:layout_marginBottom="30dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtSplashVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:text="V.0.0.1"
+            android:textColor="#DDF6FF"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtSplashCredit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:includeFontPadding="false"
+            android:text="maskuari &amp; daud 2026"
+            android:textColor="#A9DDF2"
+            android:textSize="11sp" />
+
+    </LinearLayout>
 
 </FrameLayout>

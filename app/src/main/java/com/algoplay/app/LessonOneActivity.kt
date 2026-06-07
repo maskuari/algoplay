@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.DragEvent
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
@@ -99,6 +100,7 @@ open class LessonOneActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layoutResId)
+        preloadAlgoSounds()
 
         isGuestMode = intent.getBooleanExtra(EXTRA_GUEST_MODE, false)
         alreadyCompleted = intent.getBooleanExtra(EXTRA_ALREADY_COMPLETED, false)
@@ -202,15 +204,15 @@ open class LessonOneActivity : AppCompatActivity() {
             setTextColor(ContextCompat.getColor(this@LessonOneActivity, R.color.algoplay_text))
             textSize = 13f
             setTypeface(null, Typeface.BOLD)
-            background = roundedStrokeDrawable(
-                ContextCompat.getColor(this@LessonOneActivity, R.color.white),
-                ContextCompat.getColor(this@LessonOneActivity, R.color.algoplay_blue_soft),
-                dp(16)
-            )
-            setOnLongClickListener { view ->
-                val shadow = View.DragShadowBuilder(view)
-                view.startDragAndDrop(ClipData.newPlainText("step", step), shadow, view, 0)
-                true
+            background = optionBlockDrawable(step)
+            setOnTouchListener { view, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    val shadow = View.DragShadowBuilder(view)
+                    view.startDragAndDrop(ClipData.newPlainText("step", step), shadow, view, 0)
+                    true
+                } else {
+                    false
+                }
             }
         }
     }
@@ -291,6 +293,7 @@ open class LessonOneActivity : AppCompatActivity() {
                     ContextCompat.getColor(this@LessonOneActivity, R.color.algoplay_blue_soft),
                     dp(16)
                 )
+                enableTapFeedback()
                 setOnClickListener {
                     val isCorrect = index == correctIndex
                     background = roundedStrokeDrawable(
@@ -316,6 +319,9 @@ open class LessonOneActivity : AppCompatActivity() {
     }
 
     protected open fun setupActions() {
+        btnResetGame.enableTapFeedback()
+        btnCheckGame.enableTapFeedback()
+        btnFinishLesson.enableTapFeedback()
         btnResetGame.setOnClickListener { buildGame() }
         btnCheckGame.setOnClickListener { checkGameAnswer() }
         btnFinishLesson.setOnClickListener {
@@ -327,7 +333,8 @@ open class LessonOneActivity : AppCompatActivity() {
                     else -> "Keren! Kamu menyelesaikan Materi $lessonNumber dan mendapat +100 score."
                 },
                 R.drawable.sorakan_leaderboard,
-                true
+                true,
+                soundEffect = AlgoSound.SELESAI
             ) {
                 val data = Intent().putExtra(EXTRA_COMPLETED_LESSON, lessonNumber)
                 setResult(Activity.RESULT_OK, data)
@@ -386,8 +393,10 @@ open class LessonOneActivity : AppCompatActivity() {
         message: String,
         imageRes: Int,
         success: Boolean,
+        soundEffect: AlgoSound? = if (success) AlgoSound.BENAR else AlgoSound.SALAH,
         onClose: (() -> Unit)? = null
     ) {
+        soundEffect?.let { playAlgoSound(it) }
         val dialog = Dialog(this)
         val root = FrameLayout(this).apply {
             setPadding(dp(22), 0, dp(22), 0)
@@ -440,6 +449,7 @@ open class LessonOneActivity : AppCompatActivity() {
                 dialog.dismiss()
                 onClose?.invoke()
             }
+            enableTapFeedback()
         }
         card.addView(close, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(48)).apply {
             topMargin = dp(16)
@@ -519,8 +529,20 @@ open class LessonOneActivity : AppCompatActivity() {
             shape = GradientDrawable.RECTANGLE
             cornerRadius = radius.toFloat()
             setColor(fillColor)
-            setStroke(dp(1), strokeColor)
+            setStroke(dp(2), strokeColor)
         }
+    }
+
+    protected fun optionBlockDrawable(value: String): GradientDrawable {
+        val palette = listOf(
+            Color.parseColor("#D5F0FF") to Color.parseColor("#38BDF8"),
+            Color.parseColor("#DCFCE7") to Color.parseColor("#22C55E"),
+            Color.parseColor("#FEF3C7") to Color.parseColor("#F59E0B"),
+            Color.parseColor("#FCE7F3") to Color.parseColor("#EC4899"),
+            Color.parseColor("#EDE9FE") to Color.parseColor("#8B5CF6")
+        )
+        val (fill, stroke) = palette[Math.floorMod(value.hashCode(), palette.size)]
+        return roundedStrokeDrawable(fill, stroke, dp(16))
     }
 
     protected fun dp(value: Int): Int {

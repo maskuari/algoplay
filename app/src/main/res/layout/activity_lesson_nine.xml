@@ -233,11 +233,10 @@
                     android:layout_marginTop="14dp"
                     android:text="Contoh: Apakah hujan?" />
 
-                <TextView
-                    style="@style/LessonBodyText"
-                    android:layout_marginTop="6dp"
-                    android:typeface="monospace"
-                    android:text="[MULAI]\n|\n[Apakah hujan?]\n/             \\\nIYA          TIDAK\n|              |\n[Bawa payung] [Pergi bermain]\n|              |\n[SELESAI]     [SELESAI]" />
+                <ImageView
+                    style="@style/LessonIllustration"
+                    android:contentDescription="Pilihan dalam flowchart apakah hujan"
+                    android:src="@drawable/materi9_pilihanflowchart" />
 
                 <TextView
                     style="@style/LessonBodyText"

@@ -158,11 +158,10 @@
                     android:layout_marginTop="14dp"
                     android:text="Flowchart Membuat Susu" />
 
-                <TextView
-                    style="@style/LessonBodyText"
-                    android:layout_marginTop="6dp"
-                    android:typeface="monospace"
-                    android:text="[MULAI]\n   |\n[Siapkan gelas]\n   |\n[Masukkan susu]\n   |\n[Tuang air]\n   |\n[Aduk]\n   |\n[SELESAI]" />
+                <ImageView
+                    style="@style/LessonIllustration"
+                    android:contentDescription="Flowchart membuat susu"
+                    android:src="@drawable/materi6_penjelasanfun" />
 
                 <TextView
                     style="@style/LessonBodyText"
@@ -239,38 +238,10 @@
                     style="@style/LessonSectionTitle"
                     android:text="Contoh Sehari-hari" />
 
-                <TextView
-                    style="@style/LessonSubTitle"
-                    android:layout_marginTop="12dp"
-                    android:text="Memakai Sepatu" />
-
-                <TextView
-                    style="@style/LessonBodyText"
-                    android:layout_marginTop="6dp"
-                    android:typeface="monospace"
-                    android:text="[MULAI]\n   |\n[Ambil kaus kaki]\n   |\n[Pakai kaus kaki]\n   |\n[Ambil sepatu]\n   |\n[Pakai sepatu]\n   |\n[SELESAI]" />
-
-                <TextView
-                    style="@style/LessonSubTitle"
-                    android:layout_marginTop="14dp"
-                    android:text="Mencuci Tangan" />
-
-                <TextView
-                    style="@style/LessonBodyText"
-                    android:layout_marginTop="6dp"
-                    android:typeface="monospace"
-                    android:text="[MULAI]\n   |\n[Basahi tangan]\n   |\n[Ambil sabun]\n   |\n[Gosok tangan]\n   |\n[Bilas tangan]\n   |\n[Keringkan tangan]\n   |\n[SELESAI]" />
-
-                <TextView
-                    style="@style/LessonSubTitle"
-                    android:layout_marginTop="14dp"
-                    android:text="Membuka AlgoPlay" />
-
-                <TextView
-                    style="@style/LessonBodyText"
-                    android:layout_marginTop="6dp"
-                    android:typeface="monospace"
-                    android:text="[MULAI]\n   |\n[Buka aplikasi]\n   |\n[Pilih menu Materi]\n   |\n[Pilih materi]\n   |\n[Belajar bersama Robot Algo]\n   |\n[SELESAI]" />
+                <ImageView
+                    style="@style/LessonIllustration"
+                    android:contentDescription="Contoh flowchart sehari-hari"
+                    android:src="@drawable/materi6_contoh_seharihari" />
 
             </LinearLayout>
 

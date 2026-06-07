@@ -31,6 +31,8 @@ class SequenceOrderActivity : AppCompatActivity() {
     private lateinit var txtTimer: TextView
     private lateinit var txtDifficulty: TextView
     private lateinit var txtTarget: TextView
+    private lateinit var imgHero: ImageView
+    private lateinit var imgTargetVisual: ImageView
     private lateinit var txtQuestion: TextView
     private lateinit var txtFeedback: TextView
     private lateinit var answerContainer: LinearLayout
@@ -53,6 +55,7 @@ class SequenceOrderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_puzzle_symbol)
         bindViews()
+        btnFinish.enableTapFeedback()
         btnFinish.setOnClickListener { finishWithResult() }
         showLevelDialog()
     }
@@ -69,6 +72,8 @@ class SequenceOrderActivity : AppCompatActivity() {
         txtTimer = findViewById(R.id.txtPuzzleTimer)
         txtDifficulty = findViewById(R.id.txtPuzzleDifficulty)
         txtTarget = findViewById(R.id.txtPuzzleTarget)
+        imgHero = findViewById(R.id.imgPuzzleHero)
+        imgTargetVisual = findViewById(R.id.imgPuzzleTargetVisual)
         txtQuestion = findViewById(R.id.txtPuzzleQuestion)
         txtFeedback = findViewById(R.id.txtPuzzleFeedback)
         answerContainer = findViewById(R.id.puzzleAnswerContainer)
@@ -133,6 +138,7 @@ class SequenceOrderActivity : AppCompatActivity() {
         }
         return textView("${level.label}\n$detail", 13, R.color.algoplay_text, true, Gravity.CENTER).apply {
             setLineSpacing(dp(2).toFloat(), 1f)
+            enableTapFeedback()
             background = roundedStrokeDrawable(ContextCompat.getColor(this@SequenceOrderActivity, R.color.white), ContextCompat.getColor(this@SequenceOrderActivity, R.color.algoplay_blue_soft), dp(18))
         }
     }
@@ -145,6 +151,7 @@ class SequenceOrderActivity : AppCompatActivity() {
         isDone = false
         txtTitle.text = "Urutan Langkah"
         txtDifficulty.text = "Level ${difficulty.label}"
+        imgHero.setImageResource(R.drawable.urutan_latihan)
         resultPanel.visibility = View.GONE
         btnFinish.visibility = View.GONE
         renderQuestion()
@@ -160,6 +167,7 @@ class SequenceOrderActivity : AppCompatActivity() {
         currentSlots.clear()
         txtProgress.text = "Soal ${currentIndex + 1} dari ${questions.size}"
         txtTarget.text = question.title
+        imgTargetVisual.setImageResource(sequenceVisualFor(question.id))
         txtQuestion.text = question.question
         txtFeedback.visibility = View.GONE
         answerContainer.removeAllViews()
@@ -209,7 +217,7 @@ class SequenceOrderActivity : AppCompatActivity() {
 
     private fun stepBlock(step: String): TextView {
         return textView(step, 13, R.color.algoplay_text, true, Gravity.CENTER).apply {
-            background = roundedStrokeDrawable(ContextCompat.getColor(this@SequenceOrderActivity, R.color.white), ContextCompat.getColor(this@SequenceOrderActivity, R.color.algoplay_blue_soft), dp(16))
+            background = optionBlockDrawable(step)
             setOnTouchListener { view, event ->
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     view.parent?.requestDisallowInterceptTouchEvent(true)
@@ -223,14 +231,22 @@ class SequenceOrderActivity : AppCompatActivity() {
     private fun checkAnswer() {
         val question = questions[currentIndex]
         val userAnswer = currentSlots.map { it.tag as? String }
-        if (userAnswer.any { it == null }) {
-            showFeedback("Belum lengkap. Isi semua urutan dulu.", false)
-            return
-        }
-        val correct = userAnswer == question.steps
+        val complete = userAnswer.none { it == null }
+        val correct = complete && userAnswer == question.steps
         if (correct) correctAnswer++
         timer?.cancel()
-        showFeedback(if (correct) "Benar! Urutannya rapi." else "Belum tepat. Coba pikirkan alurnya lagi nanti.", correct)
+        val message = when {
+            correct -> "Urutannya rapi dan masuk akal."
+            complete -> "Urutannya belum tepat."
+            else -> "Masih ada langkah yang belum diisi."
+        }
+        showFeedback(if (correct) "Benar! $message" else "Salah. $message", correct)
+        showBriefResultPopup(
+            title = if (correct) "Benar!" else "Salah",
+            message = message,
+            imageRes = if (correct) R.drawable.sorakan_leaderboard else R.drawable.hai_materi,
+            success = correct
+        )
         answerContainer.disableChildren()
         handler.postDelayed({ currentIndex++; renderQuestion() }, 900)
     }
@@ -240,6 +256,7 @@ class SequenceOrderActivity : AppCompatActivity() {
             override fun onTick(millisUntilFinished: Long) { txtTimer.text = formatTime(millisUntilFinished) }
             override fun onFinish() {
                 txtTimer.text = "00:00"
+                playAlgoSound(AlgoSound.SALAH)
                 showFeedback("Waktu habis. Lanjut ke soal berikutnya.", false)
                 answerContainer.disableChildren()
                 handler.postDelayed({ currentIndex++; renderQuestion() }, 900)
@@ -255,13 +272,15 @@ class SequenceOrderActivity : AppCompatActivity() {
         txtTimer.text = "--:--"
         txtProgress.text = "Selesai"
         txtTarget.text = "Hasil"
+        imgTargetVisual.setImageResource(R.drawable.sorakan_leaderboard)
         txtQuestion.text = "Robot Algo selesai menghitung skor Urutan Langkah."
         val score = TrainingQuestionBanks.calculateSequenceScore(correctAnswer)
         val bonus = if (score == 100) difficulty.perfectScoreBonus else 0
+        playAlgoSound(AlgoSound.SELESAI)
         resultPanel.visibility = View.VISIBLE
         btnFinish.visibility = View.VISIBLE
         imgResult.setImageResource(if (correctAnswer == 5) R.drawable.sorakan_leaderboard else R.drawable.hai_materi)
-        txtResultTitle.text = if (correctAnswer == 5) "Urutan Sempurna!" else "Sesi Selesai"
+        txtResultTitle.text = "Nilai $score"
         txtResultDetail.text = "Benar: $correctAnswer / 5\nSalah: ${5 - correctAnswer}\nSkor sesi: $score\nBonus level: $bonus\nPoin harian mengikuti batas 2 kali per hari."
     }
 
@@ -272,6 +291,7 @@ class SequenceOrderActivity : AppCompatActivity() {
 
     private fun label(value: String) = textView(value, 13, R.color.algoplay_blue_dark, true, Gravity.START)
     private fun actionButton(value: String, primary: Boolean) = textView(value, 13, if (primary) R.color.white else R.color.algoplay_blue_dark, true, Gravity.CENTER).apply {
+        enableTapFeedback()
         background = if (primary) roundedDrawable(ContextCompat.getColor(this@SequenceOrderActivity, R.color.algoplay_green_dark), dp(16)) else roundedStrokeDrawable(ContextCompat.getColor(this@SequenceOrderActivity, R.color.white), ContextCompat.getColor(this@SequenceOrderActivity, R.color.algoplay_blue_dark), dp(16))
     }
     private fun showFeedback(message: String, success: Boolean) {
@@ -308,7 +328,29 @@ class SequenceOrderActivity : AppCompatActivity() {
         setColor(fillColor)
         setStroke(dp(1), strokeColor)
     }
+    private fun optionBlockDrawable(value: String): GradientDrawable {
+        val palette = listOf(
+            Color.parseColor("#D5F0FF") to Color.parseColor("#38BDF8"),
+            Color.parseColor("#DCFCE7") to Color.parseColor("#22C55E"),
+            Color.parseColor("#FEF3C7") to Color.parseColor("#F59E0B"),
+            Color.parseColor("#FCE7F3") to Color.parseColor("#EC4899"),
+            Color.parseColor("#EDE9FE") to Color.parseColor("#8B5CF6")
+        )
+        val (fill, stroke) = palette[Math.floorMod(value.hashCode(), palette.size)]
+        return roundedStrokeDrawable(fill, stroke, dp(16))
+    }
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
+
+    private fun sequenceVisualFor(id: Int): Int {
+        val visuals = intArrayOf(
+            R.drawable.urutan_latihan,
+            R.drawable.belajar_materi,
+            R.drawable.hai_materi,
+            R.drawable.menantang_latihan,
+            R.drawable.informasi_penjelasan
+        )
+        return visuals[id % visuals.size]
+    }
 
     companion object {
         const val EXTRA_TRAINING_MODE = "extra_training_mode"

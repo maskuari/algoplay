@@ -153,6 +153,11 @@
                     style="@style/LessonSectionTitle"
                     android:text="Contoh Lucu" />
 
+                <ImageView
+                    style="@style/LessonIllustration"
+                    android:contentDescription="Contoh lucu urutan membuat teh"
+                    android:src="@drawable/materi2_contohlucu" />
+
                 <TextView
                     style="@style/LessonBodyText"
                     android:layout_marginTop="8dp"
@@ -243,6 +248,11 @@
                     style="@style/LessonSectionTitle"
                     android:text="Mini Game" />
 
+                <ImageView
+                    style="@style/LessonIllustration"
+                    android:contentDescription="Mini game robot Algo pergi ke sekolah"
+                    android:src="@drawable/materi2_minigame" />
+
                 <TextView
                     style="@style/LessonSubTitle"
                     android:layout_marginTop="8dp"
@@ -251,7 +261,7 @@
                 <TextView
                     style="@style/LessonBodyText"
                     android:layout_marginTop="6dp"
-                    android:text="Robot Algo ingin pergi ke sekolah, tapi langkah-langkahnya berantakan. Tahan balok, lalu seret ke kotak nomor 1 sampai 6." />
+                    android:text="Robot Algo ingin pergi ke sekolah, tapi langkah-langkahnya berantakan. Geser balok ke kotak nomor 1 sampai 6." />
 
                 <LinearLayout
                     android:id="@+id/gameChoiceContainer"

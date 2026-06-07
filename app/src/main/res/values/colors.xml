@@ -2,7 +2,7 @@
 <resources>
     <color name="algoplay_blue">#29A9EC</color>
     <color name="algoplay_blue_dark">#1589D1</color>
-    <color name="algoplay_blue_soft">#EAF8FF</color>
+    <color name="algoplay_blue_soft">#D5F0FF</color>
     <color name="algoplay_bg">#F1FAFF</color>
     <color name="algoplay_text">#14324A</color>
     <color name="algoplay_subtext">#62798D</color>

@@ -27,6 +27,8 @@ class ChallengeActivity : AppCompatActivity() {
     private lateinit var txtTimer: TextView
     private lateinit var txtDifficulty: TextView
     private lateinit var txtTarget: TextView
+    private lateinit var imgHero: ImageView
+    private lateinit var imgTargetVisual: ImageView
     private lateinit var txtQuestion: TextView
     private lateinit var txtFeedback: TextView
     private lateinit var answerContainer: LinearLayout
@@ -49,6 +51,7 @@ class ChallengeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_puzzle_symbol)
         bindViews()
+        btnFinish.enableTapFeedback()
         btnFinish.setOnClickListener { finishWithResult() }
         startSession()
     }
@@ -65,6 +68,8 @@ class ChallengeActivity : AppCompatActivity() {
         txtTimer = findViewById(R.id.txtPuzzleTimer)
         txtDifficulty = findViewById(R.id.txtPuzzleDifficulty)
         txtTarget = findViewById(R.id.txtPuzzleTarget)
+        imgHero = findViewById(R.id.imgPuzzleHero)
+        imgTargetVisual = findViewById(R.id.imgPuzzleTargetVisual)
         txtQuestion = findViewById(R.id.txtPuzzleQuestion)
         txtFeedback = findViewById(R.id.txtPuzzleFeedback)
         answerContainer = findViewById(R.id.puzzleAnswerContainer)
@@ -78,6 +83,7 @@ class ChallengeActivity : AppCompatActivity() {
     private fun startSession() {
         txtTitle.text = "Tantangan"
         txtDifficulty.text = "15 menit"
+        imgHero.setImageResource(R.drawable.tantangan_latihan)
         questions = (
             PuzzleSymbolEngine.getRandomPuzzlePatternQuestions().take(3).map { ChallengeQuestion.Pattern(it) } +
                 TrainingQuestionBanks.getRandomSequenceQuestions().take(3).map { ChallengeQuestion.Sequence(it) } +
@@ -92,6 +98,7 @@ class ChallengeActivity : AppCompatActivity() {
             override fun onTick(millisUntilFinished: Long) { txtTimer.text = formatTime(millisUntilFinished) }
             override fun onFinish() {
                 txtTimer.text = "00:00"
+                playAlgoSound(AlgoSound.SALAH)
                 finishSession()
             }
         }.start()
@@ -117,7 +124,8 @@ class ChallengeActivity : AppCompatActivity() {
     }
 
     private fun renderPattern(question: PuzzlePatternQuestion) {
-        txtTarget.text = "Puzzle Pola"
+        txtTarget.text = "Tiru pola balok"
+        imgTargetVisual.setImageResource(R.drawable.puzzle_latihan)
         txtQuestion.text = question.question
         answerContainer.addView(label("Contoh pola"))
         answerContainer.addView(patternGrid(question.blocks, readOnly = true), LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
@@ -129,7 +137,8 @@ class ChallengeActivity : AppCompatActivity() {
     }
 
     private fun renderSequence(question: SequenceQuestion) {
-        txtTarget.text = "Urutan"
+        txtTarget.text = question.title
+        imgTargetVisual.setImageResource(R.drawable.urutan_latihan)
         txtQuestion.text = question.question
         question.steps.forEachIndexed { index, _ ->
             val slot = slot(index)
@@ -144,7 +153,8 @@ class ChallengeActivity : AppCompatActivity() {
     }
 
     private fun renderQuiz(question: QuickQuizQuestion) {
-        txtTarget.text = "Quiz Cepat"
+        txtTarget.text = "Pilih jawaban terbaik"
+        imgTargetVisual.setImageResource(R.drawable.quiz_latihan)
         txtQuestion.text = question.question
         question.options.forEachIndexed { index, option ->
             answerContainer.addView(optionButton(option).apply { setOnClickListener { chooseQuiz(index, question) } }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(8) })
@@ -160,10 +170,11 @@ class ChallengeActivity : AppCompatActivity() {
     private fun checkSequence(question: SequenceQuestion) {
         val userAnswer = currentSlots.map { it.tag as? String }
         if (userAnswer.any { it == null }) {
-            showFeedback("Isi semua slot dulu.", false)
-            return
+            answer(false, "Masih ada slot kosong.")
+        } else {
+            val correct = userAnswer == question.steps
+            answer(correct, if (correct) "Urutannya tepat." else "Urutan belum tepat.")
         }
-        answer(userAnswer == question.steps, if (userAnswer == question.steps) "Benar!" else "Urutan belum tepat.")
     }
 
     private fun chooseQuiz(index: Int, question: QuickQuizQuestion) {
@@ -172,9 +183,15 @@ class ChallengeActivity : AppCompatActivity() {
 
     private fun answer(correct: Boolean, message: String) {
         if (correct) correctAnswer++
-        showFeedback(message, correct)
+        showFeedback(if (correct) "Benar! $message" else "Salah. $message", correct)
+        showBriefResultPopup(
+            title = if (correct) "Benar!" else "Salah",
+            message = message,
+            imageRes = if (correct) R.drawable.sorakan_leaderboard else R.drawable.hai_materi,
+            success = correct
+        )
         answerContainer.disableChildren()
-        handler.postDelayed({ currentIndex++; renderQuestion() }, 850)
+        handler.postDelayed({ currentIndex++; renderQuestion() }, 900)
     }
 
     private fun finishSession() {
@@ -182,14 +199,16 @@ class ChallengeActivity : AppCompatActivity() {
         isDone = true
         timer?.cancel()
         val score = correctAnswer * 10
+        playAlgoSound(AlgoSound.SELESAI)
         answerContainer.removeAllViews()
         txtProgress.text = "Selesai"
         txtTarget.text = "Hasil"
+        imgTargetVisual.setImageResource(R.drawable.sorakan_leaderboard)
         txtQuestion.text = "Tantangan selesai. Robot Algo menghitung skor kamu."
         resultPanel.visibility = View.VISIBLE
         btnFinish.visibility = View.VISIBLE
         imgResult.setImageResource(if (correctAnswer == 10) R.drawable.sorakan_leaderboard else R.drawable.hai_materi)
-        txtResultTitle.text = if (correctAnswer == 10) "Tantangan Sempurna!" else "Tantangan Selesai"
+        txtResultTitle.text = "Nilai $score"
         txtResultDetail.text = "Benar: $correctAnswer / 10\nSalah: ${10 - correctAnswer}\nSkor sesi: $score\nWaktu pengerjaan: 15 menit."
     }
 
@@ -278,7 +297,7 @@ class ChallengeActivity : AppCompatActivity() {
     }
 
     private fun stepBlock(step: String) = text(step, 13, R.color.algoplay_text, true, Gravity.CENTER).apply {
-        background = stroke(ContextCompat.getColor(this@ChallengeActivity, R.color.white), ContextCompat.getColor(this@ChallengeActivity, R.color.algoplay_blue_soft), dp(16))
+        background = optionBlockDrawable(step)
         setOnTouchListener { view, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 view.parent?.requestDisallowInterceptTouchEvent(true)
@@ -291,9 +310,16 @@ class ChallengeActivity : AppCompatActivity() {
     private fun optionButton(value: String) = text(value, 13, R.color.algoplay_text, true, Gravity.CENTER_VERTICAL).apply {
         minHeight = dp(48)
         setPadding(dp(14), dp(8), dp(14), dp(8))
-        background = stroke(ContextCompat.getColor(this@ChallengeActivity, R.color.white), ContextCompat.getColor(this@ChallengeActivity, R.color.algoplay_blue_soft), dp(16))
+        enableTapFeedback()
+        background = stroke(
+            ContextCompat.getColor(this@ChallengeActivity, R.color.white),
+            ContextCompat.getColor(this@ChallengeActivity, R.color.algoplay_blue_soft),
+            dp(16),
+            dp(2)
+        )
     }
     private fun actionButton(value: String) = text(value, 13, R.color.white, true, Gravity.CENTER).apply {
+        enableTapFeedback()
         background = rounded(ContextCompat.getColor(this@ChallengeActivity, R.color.algoplay_green_dark), dp(16))
     }
     private fun label(value: String) = text(value, 13, R.color.algoplay_blue_dark, true, Gravity.START)
@@ -314,7 +340,7 @@ class ChallengeActivity : AppCompatActivity() {
         return "%02d:%02d".format(seconds / 60, seconds % 60)
     }
     private fun colored(color: String) = stroke(Color.parseColor(color), ContextCompat.getColor(this, R.color.white), dp(10), dp(2))
-    private fun emptyCell() = stroke(ContextCompat.getColor(this, R.color.algoplay_bg), ContextCompat.getColor(this, R.color.algoplay_blue_soft), dp(10))
+    private fun emptyCell() = stroke(Color.parseColor("#E0F4FF"), ContextCompat.getColor(this, R.color.algoplay_blue_dark), dp(10), dp(2))
     private fun text(value: String, size: Int, color: Int, bold: Boolean, gravityValue: Int) = TextView(this).apply {
         text = value
         textSize = size.toFloat()
@@ -333,6 +359,17 @@ class ChallengeActivity : AppCompatActivity() {
         cornerRadius = radius.toFloat()
         setColor(fill)
         setStroke(width, stroke)
+    }
+    private fun optionBlockDrawable(value: String): GradientDrawable {
+        val palette = listOf(
+            Color.parseColor("#D5F0FF") to Color.parseColor("#38BDF8"),
+            Color.parseColor("#DCFCE7") to Color.parseColor("#22C55E"),
+            Color.parseColor("#FEF3C7") to Color.parseColor("#F59E0B"),
+            Color.parseColor("#FCE7F3") to Color.parseColor("#EC4899"),
+            Color.parseColor("#EDE9FE") to Color.parseColor("#8B5CF6")
+        )
+        val (fill, border) = palette[Math.floorMod(value.hashCode(), palette.size)]
+        return stroke(fill, border, dp(16), dp(2))
     }
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
 

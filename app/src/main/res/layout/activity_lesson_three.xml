@@ -183,6 +183,11 @@
                     style="@style/LessonSectionTitle"
                     android:text="Contoh Sehari-hari" />
 
+                <ImageView
+                    style="@style/LessonIllustration"
+                    android:contentDescription="Contoh membuat roti selai"
+                    android:src="@drawable/materi3_membuatrotiselai" />
+
                 <TextView
                     style="@style/LessonSubTitle"
                     android:layout_marginTop="12dp"
@@ -193,6 +198,11 @@
                     android:layout_marginTop="6dp"
                     android:text="1. Ambil roti.\n2. Ambil selai.\n3. Oleskan selai ke roti.\n4. Tutup dengan roti lain.\n5. Roti selai siap dimakan." />
 
+                <ImageView
+                    style="@style/LessonIllustration"
+                    android:contentDescription="Contoh menggambar"
+                    android:src="@drawable/materi3_menggambar" />
+
                 <TextView
                     style="@style/LessonSubTitle"
                     android:layout_marginTop="14dp"
@@ -202,6 +212,11 @@
                     style="@style/LessonBodyText"
                     android:layout_marginTop="6dp"
                     android:text="1. Siapkan kertas.\n2. Siapkan pensil.\n3. Buat gambar.\n4. Warnai gambar.\n5. Rapikan hasil gambar." />
+
+                <ImageView
+                    style="@style/LessonIllustration"
+                    android:contentDescription="Contoh menanam bunga"
+                    android:src="@drawable/materi3_menanambunga" />
 
                 <TextView
                     style="@style/LessonSubTitle"

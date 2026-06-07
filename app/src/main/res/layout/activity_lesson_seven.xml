@@ -178,6 +178,11 @@
                     style="@style/LessonSectionTitle"
                     android:text="Simbol Flowchart Dasar" />
 
+                <ImageView
+                    style="@style/LessonIllustration"
+                    android:contentDescription="Simbol flowchart dasar"
+                    android:src="@drawable/materi7_simbol_flowchart" />
+
                 <TextView
                     style="@style/LessonSubTitle"
                     android:layout_marginTop="12dp"

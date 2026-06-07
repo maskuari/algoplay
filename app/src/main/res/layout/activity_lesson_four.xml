@@ -148,6 +148,11 @@
                     style="@style/LessonSectionTitle"
                     android:text="Penjelasan Fun" />
 
+                <ImageView
+                    style="@style/LessonIllustration"
+                    android:contentDescription="Penjelasan fun menulis langkah"
+                    android:src="@drawable/materi4_penjelasanfun" />
+
                 <TextView
                     style="@style/LessonBodyText"
                     android:layout_marginTop="8dp"
