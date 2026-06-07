@@ -1,0 +1,581 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_tab_materi"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <ScrollView
+        android:id="@+id/lessonScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingTop="112dp"
+        android:paddingBottom="30dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="22dp"
+            android:paddingEnd="22dp"
+            android:paddingBottom="28dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="188dp"
+                android:background="@drawable/bg_home_hero_clean"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:elevation="2dp"
+                android:paddingStart="20dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="18dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:paddingEnd="132dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="Materi 7"
+                        android:textColor="@color/algoplay_green_dark"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="1dp"
+                        android:text="Mengenal Simbol-simbol Flowchart"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Kenali bentuk dan tugas simbol flowchart dasar."
+                        android:textColor="@color/algoplay_subtext"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="134dp"
+                    android:layout_height="134dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Robot Algo mengenalkan simbol flowchart"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/informasi_penjelasan" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Tujuan Materi" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Anak-anak dapat mengenal beberapa simbol dasar flowchart dan memahami fungsi masing-masing simbol." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Halo, teman-teman!" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Robot Algo datang lagi nih! Kemarin kita sudah belajar bahwa flowchart adalah gambar alur langkah-langkah." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Hari ini kita mengenal simbol-simbol flowchart. Simbol itu seperti tanda khusus. Setiap bentuk punya tugas masing-masing." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Ada simbol untuk mulai, simbol untuk langkah, simbol untuk memilih, dan panah untuk menunjukkan arah. Jadi flowchart bukan cuma kotak-kotak biasa, ya." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Penjelasan Fun" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Bayangkan flowchart itu seperti jalan petualangan Robot Algo. Di jalan itu ada tanda-tanda." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Kalau ada tanda MULAI, Algo boleh memulai perjalanan. Kalau ada tanda langkah, Algo harus melakukan sesuatu. Kalau ada tanda pilihan, Algo harus memilih jalan." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Kalau tidak ada simbol dan panah, Algo bisa bingung: Aduh, aku harus mulai dari mana nih?" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Simbol Flowchart Dasar" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="12dp"
+                    android:text="1. Oval atau kapsul" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Digunakan untuk MULAI dan SELESAI. Ini tanda awal dan akhir flowchart." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="2. Persegi panjang" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Digunakan untuk proses atau langkah, misalnya Ambil gelas, Tuang air, atau Aduk susu." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="3. Jajar genjang" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Digunakan untuk input atau output. Input artinya sesuatu yang dimasukkan, output artinya hasil yang ditampilkan." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="4. Belah ketupat" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Digunakan saat ada pilihan atau keputusan. Biasanya jawabannya YA atau TIDAK." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="5. Panah" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Digunakan untuk menunjukkan arah langkah berikutnya. Panah seperti jalan yang harus diikuti Robot Algo." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Contoh Flowchart Sederhana" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="12dp"
+                    android:text="Flowchart Membawa Payung" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:typeface="monospace"
+                    android:text="[MULAI]\n   |\n[Apakah hujan?]\n   |\nYA -> [Bawa payung]\n   |\n[Tidak kehujanan]\n   |\n[SELESAI]" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Flowchart bisa membantu Robot Algo membuat pilihan. Kalau hujan, bawa payung. Kalau tidak hujan, Algo bisa langsung pergi." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Kesimpulan" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Simbol flowchart punya bentuk dan tugas masing-masing. Oval untuk mulai dan selesai, persegi panjang untuk proses, jajar genjang untuk input atau output, belah ketupat untuk pilihan, dan panah untuk arah." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Setiap simbol punya tugas sendiri supaya flowchart mudah dibaca." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Mini Game" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="8dp"
+                    android:text="Cocokkan Simbol Flowchart!" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Simbol-simbol Robot Algo tercampur. Pilih satu simbol di kiri, lalu pilih arti yang cocok di kanan." />
+
+                <LinearLayout
+                    android:id="@+id/gameSlotContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical" />
+
+                <LinearLayout
+                    android:id="@+id/gameChoiceContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/btnResetGame"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_marginEnd="7dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_auth_switch_panel"
+                        android:gravity="center"
+                        android:text="Ulangi"
+                        android:textColor="@color/algoplay_blue_dark"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btnCheckGame"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_marginStart="7dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_button_green"
+                        android:gravity="center"
+                        android:text="Cek Pasangan"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Quiz Singkat" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="10dp"
+                    android:text="1. Simbol oval dalam flowchart biasanya digunakan untuk..." />
+
+                <LinearLayout
+                    android:id="@+id/quizOneContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="16dp"
+                    android:text="2. Simbol belah ketupat digunakan untuk..." />
+
+                <LinearLayout
+                    android:id="@+id/quizTwoContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_stat_green"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Hebat! Sekarang kamu sudah mengenal simbol-simbol flowchart. Dengan simbol yang benar, flowchart jadi rapi dan mudah dibaca Robot Algo."
+                    android:textColor="@color/algoplay_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="84dp"
+                    android:layout_height="84dp"
+                    android:layout_marginStart="8dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Robot senang"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/sorakan_leaderboard" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btnFinishLesson"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_button_blue"
+                android:gravity="center"
+                android:text="Lanjut ke Materi 8"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/lessonTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_gravity="top"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_home_card"
+        android:elevation="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.08"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/lessonTopAvatarWrap"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_profile_avatar"
+                android:padding="7dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgLessonTopPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Foto profil"
+                    android:src="@drawable/ic_user"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.AlgoPlay.Circle"
+                    app:tint="@color/algoplay_blue_dark" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/txtLessonTopName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Teman"
+                android:textColor="@color/algoplay_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1.15"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtLessonTopDay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Minggu"
+                android:textColor="@color/algoplay_blue_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtLessonTopDateTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="7 Juni 2026 - 04:37"
+                android:textColor="@color/algoplay_subtext"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lessonRankBadge"
+            android:layout_width="92dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_reward_chip"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp">
+
+            <TextView
+                android:id="@+id/txtLessonRankLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="Tingkat 1"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtLessonRankStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Beginner"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

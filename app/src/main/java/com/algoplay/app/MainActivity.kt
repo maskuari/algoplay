@@ -203,14 +203,36 @@ class MainActivity : AppCompatActivity() {
     private var isGuestMode = false
     private var lastContinueType: String? = null
     private var lastContinueKey: String? = null
+    private var finalExamScore = 0
     private val completedLessons = mutableSetOf<Int>()
     private val completedActivities = mutableSetOf<String>()
 
     private val lessonLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val lessonNumber = result.data?.getIntExtra(LessonOneActivity.EXTRA_COMPLETED_LESSON, 0) ?: 0
+            val examScore = result.data?.getIntExtra(LessonTwelveActivity.EXTRA_EXAM_SCORE, 0) ?: 0
             if (lessonNumber > 0) {
-                markLessonCompletedFromPage(lessonNumber)
+                if (lessonNumber == FINAL_EXAM_LESSON_NUMBER && examScore > 0) {
+                    markFinalExamCompletedFromPage(examScore)
+                } else {
+                    markLessonCompletedFromPage(lessonNumber)
+                }
+            }
+        }
+    }
+
+    private val trainingLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val mode = result.data?.getStringExtra(PuzzleSymbolActivity.EXTRA_TRAINING_MODE).orEmpty()
+            val score = result.data?.getIntExtra(PuzzleSymbolActivity.EXTRA_SESSION_SCORE, 0) ?: 0
+            val correct = result.data?.getIntExtra(PuzzleSymbolActivity.EXTRA_CORRECT_ANSWER, 0) ?: 0
+            if (mode.isNotBlank()) {
+                if (!isGuestMode) {
+                    completedActivities.add(mode)
+                }
+                saveContinueTarget(CONTINUE_LATIHAN, mode)
+                updateContent(MainTab.LATIHAN)
+                Toast.makeText(this, "Latihan selesai: $correct benar, skor $score.", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -293,10 +315,10 @@ class MainActivity : AppCompatActivity() {
         get() = trainingModeStats().sumOf { it.bestScore }
 
     private val materialScore: Int
-        get() = completedLessons.size * LESSON_SCORE_REWARD
+        get() = completedLessons.count { it != FINAL_EXAM_LESSON_NUMBER } * LESSON_SCORE_REWARD
 
     private val totalScore: Int
-        get() = materialScore + trainingTotalScore
+        get() = materialScore + trainingTotalScore + finalExamScore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -510,7 +532,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     MainTab.MATERI -> showCardDetail(index)
-                    MainTab.LATIHAN -> showCardDetail(index)
+                    MainTab.LATIHAN -> openTrainingMode(index)
                     MainTab.LEADERBOARD -> showCardDetail(index)
                     MainTab.PROFIL -> {
                         if (index == 3) {
@@ -788,6 +810,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadLocalProgress() {
         completedLessons.clear()
         completedActivities.clear()
+        finalExamScore = 0
         if (isGuestMode) {
             userLocalPhotoUri = null
             lastContinueType = null
@@ -807,6 +830,7 @@ class MainActivity : AppCompatActivity() {
                 .split(",")
                 .filter { it.isNotBlank() }
         )
+        finalExamScore = progressStore.getInt(KEY_FINAL_EXAM_SCORE, 0)
         userLocalPhotoUri = progressStore.getString(KEY_PROFILE_PHOTO_URI, null)
             ?.let { Uri.parse(it) }
         lastContinueType = progressStore.getString(KEY_LAST_CONTINUE_TYPE, null)
@@ -818,6 +842,7 @@ class MainActivity : AppCompatActivity() {
         progressStore.edit()
             .putString(KEY_COMPLETED_LESSONS, completedLessons.sorted().joinToString(","))
             .putString(KEY_COMPLETED_ACTIVITIES, completedActivities.sorted().joinToString(","))
+            .putInt(KEY_FINAL_EXAM_SCORE, finalExamScore)
             .putString(KEY_LAST_CONTINUE_TYPE, lastContinueType)
             .putString(KEY_LAST_CONTINUE_KEY, lastContinueKey)
             .apply()
@@ -1017,7 +1042,7 @@ class MainActivity : AppCompatActivity() {
                 txtMascotTitle.text = "Albi menantang"
                 txtMascotSpeech.text = "Pilih satu game dulu. Menang challenge akan kasih special score!"
                 txtSectionTitle.text = "Mode Latihan"
-                txtProgressTitle.text = "Akurasi latihan"
+                txtProgressTitle.text = "Progress latihan"
                 statsRow.visibility = View.GONE
                 imgHeroIcon.setImageResource(R.drawable.ic_flow)
                 cards = listOf(
@@ -1029,8 +1054,8 @@ class MainActivity : AppCompatActivity() {
                         "Puzzle Flowchart",
                         "Cocokkan simbol ke fungsi yang benar. Ini membantu kamu hafal bentuk flowchart.",
                         "Oval = Mulai/Selesai\nKotak = Proses\nBelah ketupat = Keputusan",
-                        if (completedActivities.contains("puzzle_symbol")) "Sudah Selesai" else "Main Puzzle",
-                        rewardKey = "puzzle_symbol",
+                        "Main Puzzle",
+                        rewardKey = PUZZLE_SYMBOL_KEY,
                         scoreReward = 300
                     ),
                     CardContent(
@@ -1041,8 +1066,8 @@ class MainActivity : AppCompatActivity() {
                         "Puzzle Urutan",
                         "Susun langkah acak menjadi algoritma yang masuk akal.",
                         "Contoh:\n1. Mulai\n2. Siapkan buku\n3. Baca soal\n4. Tulis jawaban\n5. Selesai",
-                        if (completedActivities.contains("urut_langkah")) "Sudah Selesai" else "Susun Sekarang",
-                        rewardKey = "urut_langkah",
+                        "Susun Sekarang",
+                        rewardKey = SEQUENCE_ORDER_KEY,
                         scoreReward = 500
                     ),
                     CardContent(
@@ -1053,8 +1078,8 @@ class MainActivity : AppCompatActivity() {
                         "Quiz Cepat",
                         "Jawab pertanyaan singkat. Jika benar, score latihanmu naik.",
                         "Pertanyaan contoh:\nSimbol 'Mulai' berbentuk apa?\nJawaban: Oval",
-                        if (completedActivities.contains("quiz_cepat")) "Sudah Selesai" else "Jawab Quiz",
-                        rewardKey = "quiz_cepat",
+                        "Jawab Quiz",
+                        rewardKey = QUICK_QUIZ_KEY,
                         scoreReward = 700
                     ),
                     CardContent(
@@ -1065,7 +1090,7 @@ class MainActivity : AppCompatActivity() {
                         "Tantangan Harian",
                         "Selesaikan satu puzzle dan satu quiz untuk membuka reward baru.",
                         "Tantangan muncul ulang tiap 6 jam. Versi tampilan sekarang memakai 4 soal random sebagai simulasi.",
-                        if (completedActivities.contains(CHALLENGE_KEY)) "Sudah Selesai" else "Ambil Tantangan",
+                        "Ambil Tantangan",
                         rewardKey = CHALLENGE_KEY,
                         scoreReward = 900
                     )
@@ -1144,7 +1169,7 @@ class MainActivity : AppCompatActivity() {
         cardGrid.visibility = if (isLatihan) View.VISIBLE else View.GONE
         leaderboardDashboard.visibility = if (isLeaderboard) View.VISIBLE else View.GONE
         detailCard.visibility = View.GONE
-        progressCard.visibility = if (isLatihan) View.VISIBLE else View.GONE
+        progressCard.visibility = View.GONE
         profileDashboard.visibility = if (isProfile) View.VISIBLE else View.GONE
     }
 
@@ -1252,20 +1277,56 @@ class MainActivity : AppCompatActivity() {
             }
             CONTINUE_LATIHAN -> {
                 val rewardKey = target.second
-                selectTab(MainTab.LATIHAN)
-                currentCards.indexOfFirst { it.rewardKey == rewardKey }
-                    .takeIf { it >= 0 }
-                    ?.let { index -> mainScroll.post { showCardDetail(index) } }
+                when (rewardKey) {
+                    PUZZLE_SYMBOL_KEY -> openPuzzleSymbolPage()
+                    SEQUENCE_ORDER_KEY -> openSequenceOrderPage()
+                    QUICK_QUIZ_KEY -> openQuickQuizPage()
+                    CHALLENGE_KEY -> openChallengePage()
+                    else -> selectTab(MainTab.LATIHAN)
+                }
             }
         }
     }
 
     private fun openChallengeFromHome() {
         saveContinueTarget(CONTINUE_LATIHAN, CHALLENGE_KEY)
-        selectTab(MainTab.LATIHAN)
-        currentCards.indexOfFirst { it.rewardKey == CHALLENGE_KEY }
-            .takeIf { it >= 0 }
-            ?.let { index -> mainScroll.post { showCardDetail(index) } }
+        openChallengePage()
+    }
+
+    private fun openTrainingMode(index: Int) {
+        val card = currentCards.getOrNull(index) ?: return
+        when (card.rewardKey) {
+            PUZZLE_SYMBOL_KEY -> openPuzzleSymbolPage()
+            SEQUENCE_ORDER_KEY -> openSequenceOrderPage()
+            QUICK_QUIZ_KEY -> openQuickQuizPage()
+            CHALLENGE_KEY -> openChallengePage()
+            else -> Toast.makeText(this, "Halaman ${card.title} akan dibuat berikutnya.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun openPuzzleSymbolPage() {
+        saveContinueTarget(CONTINUE_LATIHAN, PUZZLE_SYMBOL_KEY)
+        val uid = auth.currentUser?.uid.orEmpty()
+        val intent = Intent(this, PuzzleSymbolActivity::class.java).apply {
+            putExtra(PuzzleSymbolActivity.EXTRA_GUEST_MODE, isGuestMode)
+            putExtra(PuzzleSymbolActivity.EXTRA_USER_ID, uid)
+        }
+        trainingLauncher.launch(intent)
+    }
+
+    private fun openSequenceOrderPage() {
+        saveContinueTarget(CONTINUE_LATIHAN, SEQUENCE_ORDER_KEY)
+        trainingLauncher.launch(Intent(this, SequenceOrderActivity::class.java))
+    }
+
+    private fun openQuickQuizPage() {
+        saveContinueTarget(CONTINUE_LATIHAN, QUICK_QUIZ_KEY)
+        trainingLauncher.launch(Intent(this, QuickQuizActivity::class.java))
+    }
+
+    private fun openChallengePage() {
+        saveContinueTarget(CONTINUE_LATIHAN, CHALLENGE_KEY)
+        trainingLauncher.launch(Intent(this, ChallengeActivity::class.java))
     }
 
     private fun nextLessonNumber(): Int {
@@ -1425,6 +1486,14 @@ class MainActivity : AppCompatActivity() {
             2 -> LessonTwoActivity::class.java
             3 -> LessonThreeActivity::class.java
             4 -> LessonFourActivity::class.java
+            5 -> LessonFiveActivity::class.java
+            6 -> LessonSixActivity::class.java
+            7 -> LessonSevenActivity::class.java
+            8 -> LessonEightActivity::class.java
+            9 -> LessonNineActivity::class.java
+            10 -> LessonTenActivity::class.java
+            11 -> LessonElevenActivity::class.java
+            12 -> LessonTwelveActivity::class.java
             else -> null
         }
 
@@ -1439,7 +1508,7 @@ class MainActivity : AppCompatActivity() {
             }
             lessonLauncher.launch(intent)
         } else {
-            Toast.makeText(this, "Materi $lessonNumber sudah terbuka. Halamannya kita lanjut buat setelah Materi 4.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Semua halaman materi sudah tersedia.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -1461,6 +1530,29 @@ class MainActivity : AppCompatActivity() {
             message,
             Toast.LENGTH_SHORT
         ).show()
+    }
+
+    private fun markFinalExamCompletedFromPage(score: Int) {
+        val normalizedScore = score.coerceIn(0, 100)
+        val wasNew = completedLessons.add(FINAL_EXAM_LESSON_NUMBER)
+        val oldExamScore = finalExamScore
+        saveContinueTarget(CONTINUE_MATERI, FINAL_EXAM_LESSON_NUMBER.toString())
+
+        if (!isGuestMode) {
+            finalExamScore = maxOf(finalExamScore, normalizedScore)
+            if (wasNew || finalExamScore != oldExamScore) {
+                saveLocalProgress()
+            }
+        }
+
+        updateContent(MainTab.MATERI)
+        val message = when {
+            isGuestMode -> "Simulasi ujian selesai. Login untuk menyimpan nilai."
+            finalExamScore > oldExamScore -> "Ujian selesai! Score ujian bertambah ${finalExamScore - oldExamScore}."
+            wasNew -> "Ujian selesai! Nilai terbaikmu $finalExamScore."
+            else -> "Nilai ujian terbaik tetap $finalExamScore."
+        }
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun handleDetailAction() {
@@ -1679,9 +1771,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun trainingModeStats(): List<TrainingModeStat> {
         val baseStats = listOf(
-            TrainingModeStat("puzzle_symbol", "Puzzle Simbol", "Puzzle", 300, 0, 0, 0, R.color.algoplay_blue_dark),
-            TrainingModeStat("urut_langkah", "Urutan Langkah", "Urutan", 500, 0, 0, 0, R.color.algoplay_green_dark),
-            TrainingModeStat("quiz_cepat", "Quiz Cepat", "Quiz", 700, 0, 0, 0, R.color.algoplay_red_dark),
+            TrainingModeStat(PUZZLE_SYMBOL_KEY, "Puzzle Simbol", "Puzzle", 300, 0, 0, 0, R.color.algoplay_blue_dark),
+            TrainingModeStat(SEQUENCE_ORDER_KEY, "Urutan Langkah", "Urutan", 500, 0, 0, 0, R.color.algoplay_green_dark),
+            TrainingModeStat(QUICK_QUIZ_KEY, "Quiz Cepat", "Quiz", 700, 0, 0, 0, R.color.algoplay_red_dark),
             TrainingModeStat(CHALLENGE_KEY, "Tantangan 6 Jam", "Tantang", 900, 0, 0, 0, R.color.algoplay_gold_dark)
         )
 
@@ -1778,7 +1870,11 @@ class MainActivity : AppCompatActivity() {
         }
         updateDetail(card)
         detailCard.visibility = View.VISIBLE
-        progressCard.visibility = if (currentTab == MainTab.PROFIL || currentTab == MainTab.MATERI) View.GONE else View.VISIBLE
+        progressCard.visibility = if (
+            currentTab == MainTab.LATIHAN ||
+            currentTab == MainTab.PROFIL ||
+            currentTab == MainTab.MATERI
+        ) View.GONE else View.VISIBLE
         mainScroll.post { mainScroll.smoothScrollTo(0, detailCard.top - dp(12)) }
     }
 
@@ -1786,7 +1882,7 @@ class MainActivity : AppCompatActivity() {
         txtDetailEyebrow.text = when (currentTab) {
             MainTab.HOME -> "Pilihan Albi"
             MainTab.MATERI -> "Materi"
-            MainTab.LATIHAN -> "Mode Bermain"
+            MainTab.LATIHAN -> "Latihan"
             MainTab.LEADERBOARD -> "Leaderboard"
             MainTab.PROFIL -> "Profil Anak"
         }
@@ -2077,12 +2173,17 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val KEY_COMPLETED_LESSONS = "completed_lessons"
         private const val KEY_COMPLETED_ACTIVITIES = "completed_activities"
+        private const val KEY_FINAL_EXAM_SCORE = "final_exam_score"
         private const val KEY_PROFILE_PHOTO_URI = "profile_photo_uri"
         private const val KEY_LAST_CONTINUE_TYPE = "last_continue_type"
         private const val KEY_LAST_CONTINUE_KEY = "last_continue_key"
         private const val CONTINUE_MATERI = "materi"
         private const val CONTINUE_LATIHAN = "latihan"
+        private const val PUZZLE_SYMBOL_KEY = "puzzle_symbol"
+        private const val SEQUENCE_ORDER_KEY = "urut_langkah"
+        private const val QUICK_QUIZ_KEY = "quiz_cepat"
         private const val CHALLENGE_KEY = "tantangan_harian"
+        private const val FINAL_EXAM_LESSON_NUMBER = 12
         private const val LESSON_SCORE_REWARD = 100
         private const val CLOCK_REFRESH_MS = 30_000L
     }

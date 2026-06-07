@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_tab_materi"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <ScrollView
+        android:id="@+id/lessonScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingTop="112dp"
+        android:paddingBottom="30dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="22dp"
+            android:paddingEnd="22dp"
+            android:paddingBottom="28dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="188dp"
+                android:background="@drawable/bg_home_hero_clean"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:elevation="2dp"
+                android:paddingStart="20dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="18dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:paddingEnd="132dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="Materi 6"
+                        android:textColor="@color/algoplay_green_dark"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="1dp"
+                        android:text="Yuk Kenalan dengan Flowchart"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="23sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Belajar membaca alur langkah dengan kotak dan panah."
+                        android:textColor="@color/algoplay_subtext"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="134dp"
+                    android:layout_height="134dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Robot Algo belajar flowchart"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/hai_materi" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Tujuan Materi" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Anak-anak mengenal bahwa flowchart adalah gambar alur langkah-langkah yang membantu kita melihat urutan kegiatan dengan lebih mudah." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Halo, teman-teman!" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Robot Algo datang lagi nih! Hari ini kita belajar sesuatu yang seru, namanya flowchart." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Flowchart adalah gambar yang menunjukkan langkah-langkah dari awal sampai selesai. Kalau sebelumnya kita menulis langkah dengan kata-kata, sekarang langkah itu dibuat menjadi kotak-kotak dan panah." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Flowchart itu seperti peta jalan untuk Robot Algo. Algo tinggal mengikuti panah dari satu langkah ke langkah berikutnya." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Penjelasan Fun" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Bayangkan Robot Algo ingin membuat susu. Kalau dibuat flowchart, alurnya terlihat seperti kotak yang disambungkan panah." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Flowchart Membuat Susu" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:typeface="monospace"
+                    android:text="[MULAI]\n   |\n[Siapkan gelas]\n   |\n[Masukkan susu]\n   |\n[Tuang air]\n   |\n[Aduk]\n   |\n[SELESAI]" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Panah itu penting, karena panah memberi tahu Robot Algo setelah ini harus lanjut ke mana." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Apa Isi Flowchart?" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="12dp"
+                    android:text="1. Awal" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Tempat kegiatan dimulai. Biasanya ditulis MULAI." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="2. Langkah-langkah" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Isi kegiatan yang harus dilakukan, misalnya ambil gelas, tuang air, atau aduk susu." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="3. Panah" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Panah menunjukkan urutan jalan dari satu kotak ke kotak berikutnya." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="4. Akhir" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Tempat kegiatan selesai. Biasanya ditulis SELESAI." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Contoh Sehari-hari" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="12dp"
+                    android:text="Memakai Sepatu" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:typeface="monospace"
+                    android:text="[MULAI]\n   |\n[Ambil kaus kaki]\n   |\n[Pakai kaus kaki]\n   |\n[Ambil sepatu]\n   |\n[Pakai sepatu]\n   |\n[SELESAI]" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Mencuci Tangan" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:typeface="monospace"
+                    android:text="[MULAI]\n   |\n[Basahi tangan]\n   |\n[Ambil sabun]\n   |\n[Gosok tangan]\n   |\n[Bilas tangan]\n   |\n[Keringkan tangan]\n   |\n[SELESAI]" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Membuka AlgoPlay" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:typeface="monospace"
+                    android:text="[MULAI]\n   |\n[Buka aplikasi]\n   |\n[Pilih menu Materi]\n   |\n[Pilih materi]\n   |\n[Belajar bersama Robot Algo]\n   |\n[SELESAI]" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Kesimpulan" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Flowchart adalah gambar alur langkah-langkah. Flowchart membantu kita melihat urutan kegiatan dengan lebih mudah." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Di dalam flowchart ada awal, langkah-langkah, panah, dan akhir. Ikuti panahnya dari awal sampai selesai!" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Mini Game" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="8dp"
+                    android:text="Ikuti Panah Robot Algo!" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Robot Algo ingin mencuci tangan. Ketuk kotak sesuai alur panah yang benar dari MULAI sampai SELESAI." />
+
+                <LinearLayout
+                    android:id="@+id/gameSlotContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical" />
+
+                <LinearLayout
+                    android:id="@+id/gameChoiceContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/btnResetGame"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_marginEnd="7dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_auth_switch_panel"
+                        android:gravity="center"
+                        android:text="Ulangi"
+                        android:textColor="@color/algoplay_blue_dark"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btnCheckGame"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_marginStart="7dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_button_green"
+                        android:gravity="center"
+                        android:text="Cek Alur"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Quiz Singkat" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="10dp"
+                    android:text="1. Flowchart adalah..." />
+
+                <LinearLayout
+                    android:id="@+id/quizOneContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="16dp"
+                    android:text="2. Apa fungsi panah dalam flowchart?" />
+
+                <LinearLayout
+                    android:id="@+id/quizTwoContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_stat_green"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Keren! Sekarang kamu sudah kenal flowchart. Flowchart membantu kita melihat langkah dengan gambar dan panah yang mudah diikuti."
+                    android:textColor="@color/algoplay_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="84dp"
+                    android:layout_height="84dp"
+                    android:layout_marginStart="8dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Robot senang"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/sorakan_leaderboard" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btnFinishLesson"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_button_blue"
+                android:gravity="center"
+                android:text="Lanjut ke Materi 7"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/lessonTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_gravity="top"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_home_card"
+        android:elevation="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.08"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/lessonTopAvatarWrap"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_profile_avatar"
+                android:padding="7dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgLessonTopPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Foto profil"
+                    android:src="@drawable/ic_user"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.AlgoPlay.Circle"
+                    app:tint="@color/algoplay_blue_dark" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/txtLessonTopName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Teman"
+                android:textColor="@color/algoplay_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1.15"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtLessonTopDay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Minggu"
+                android:textColor="@color/algoplay_blue_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtLessonTopDateTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="7 Juni 2026 - 04:37"
+                android:textColor="@color/algoplay_subtext"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lessonRankBadge"
+            android:layout_width="92dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_reward_chip"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp">
+
+            <TextView
+                android:id="@+id/txtLessonRankLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="Tingkat 1"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtLessonRankStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Beginner"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

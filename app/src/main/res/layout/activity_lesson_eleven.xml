@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_tab_materi"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <ScrollView
+        android:id="@+id/lessonScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingTop="112dp"
+        android:paddingBottom="30dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="22dp"
+            android:paddingEnd="22dp"
+            android:paddingBottom="28dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="188dp"
+                android:background="@drawable/bg_home_hero_clean"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:elevation="2dp"
+                android:paddingStart="20dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="18dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:paddingEnd="132dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="Materi 11"
+                        android:textColor="@color/algoplay_green_dark"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="1dp"
+                        android:text="Kesimpulan: Apa yang Sudah Kita Pelajari"
+                        android:textColor="@color/algoplay_text"
+                        android:textSize="21sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Ayo ingat lagi perjalanan seru bersama Robot Algo."
+                        android:textColor="@color/algoplay_subtext"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="134dp"
+                    android:layout_height="134dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Robot Algo bangga"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/sorakan_leaderboard" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Tujuan Materi" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Anak-anak dapat mengingat kembali semua materi yang sudah dipelajari, mulai dari algoritma, urutan langkah, pseudocode, flowchart, pilihan, sampai pengulangan." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Halo, teman-teman!" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Wah, hebat sekali! Kamu sudah belajar banyak bersama Robot Algo." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Dari awal kita belajar langkah-langkah sederhana, sampai sekarang kamu sudah mengenal flowchart, pilihan, dan pengulangan." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Robot Algo bangga banget sama kamu. Sekarang, ayo kita ingat-ingat lagi apa saja yang sudah kita pelajari." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Rangkuman Materi 1 - 5" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="12dp"
+                    android:text="Materi 1 - Yuk Kenalan dengan Algoritma" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Kita belajar bahwa algoritma adalah urutan langkah-langkah untuk menyelesaikan sesuatu, seperti menyikat gigi, memakai sepatu, membuat susu, dan merapikan mainan." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Materi 2 - Algoritma Itu Seperti Langkah-langkah" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Algoritma itu seperti petunjuk langkah demi langkah. Kalau ingin pergi ke sekolah, kita bangun tidur, mandi, memakai seragam, sarapan, memakai sepatu, lalu berangkat." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Kalau urutannya terbalik, hasilnya bisa lucu. Masa berangkat sekolah dulu, baru mandi? Hehe, tentu tidak ya." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Materi 3 - Belajar Urutan Kegiatan" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Setiap kegiatan punya urutan dari awal sampai akhir. Contohnya membuat roti selai: ambil roti dulu, beri selai, lalu baru dimakan." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Materi 4 - Menulis Langkah dengan Kata-kata Sendiri" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Langkah yang baik harus singkat, jelas, mudah dimengerti, dan berurutan. Kalau langkahnya jelas, Robot Algo bisa mengikuti perintah dengan mudah." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Materi 5 - Mengenal Pseudocode dengan Mudah" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Pseudocode adalah cara menulis langkah-langkah seperti kode, tapi masih mudah dibaca manusia. Biasanya ada MULAI, langkah-langkah, dan SELESAI." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Rangkuman Materi 6 - 10" />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="12dp"
+                    android:text="Materi 6 - Yuk Kenalan dengan Flowchart" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Flowchart adalah gambar alur langkah-langkah. Flowchart berisi kotak, simbol, dan panah supaya Robot Algo tahu ke mana harus berjalan." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Materi 7 - Mengenal Simbol-simbol Flowchart" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Setiap simbol punya tugas sendiri: oval untuk mulai dan selesai, persegi panjang untuk proses, jajar genjang untuk input/output, belah ketupat untuk pilihan, dan panah untuk arah." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Materi 8 - Cara Membuat Flowchart yang Rapi" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Flowchart yang rapi punya MULAI, langkah yang jelas, panah yang tidak membingungkan, simbol yang sesuai, dan SELESAI." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Materi 9 - Belajar Pilihan: Jika Iya atau Tidak" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Dalam algoritma, kadang ada pertanyaan yang jawabannya IYA atau TIDAK. Contohnya: Apakah hujan? Jika IYA, bawa payung. Jika TIDAK, pergi bermain." />
+
+                <TextView
+                    style="@style/LessonSubTitle"
+                    android:layout_marginTop="14dp"
+                    android:text="Materi 10 - Belajar Pengulangan: Lakukan Lagi" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="6dp"
+                    android:text="Pengulangan artinya melakukan sesuatu berkali-kali sampai selesai, seperti melompat 5 kali, tepuk tangan 3 kali, atau mengambil mainan satu per satu." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    style="@style/LessonSectionTitle"
+                    android:text="Kesimpulan Besar" />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="8dp"
+                    android:text="Sekarang kamu sudah tahu bahwa algoritma membantu kita menyelesaikan sesuatu dengan langkah-langkah yang jelas." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Algoritma bisa ditulis dengan kata-kata biasa, pseudocode, dan flowchart." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Algoritma juga bisa memiliki urutan langkah, pilihan, dan pengulangan." />
+
+                <TextView
+                    style="@style/LessonBodyText"
+                    android:layout_marginTop="10dp"
+                    android:text="Jadi, algoritma bukan hal yang menakutkan. Algoritma dekat dengan kegiatan sehari-hari: menyikat gigi, memakai sepatu, membuat minuman, bermain game, atau merapikan mainan." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_home_card"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/LessonSectionTitle"
+                        android:text="Pesan dari Robot Algo" />
+
+                    <TextView
+                        style="@style/LessonBodyText"
+                        android:layout_marginTop="8dp"
+                        android:text="Hebat sekali! Kamu sudah sampai sejauh ini. Robot Algo senang banget karena kamu belajar dengan semangat." />
+
+                    <TextView
+                        style="@style/LessonBodyText"
+                        android:layout_marginTop="10dp"
+                        android:text="Sekarang kamu sudah tahu cara menyusun langkah, membaca flowchart, memilih jalan, dan melakukan pengulangan. Itu semua bekal penting untuk belajar komputer dan pemrograman nanti." />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="92dp"
+                    android:layout_height="92dp"
+                    android:layout_marginStart="10dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Robot Algo menyemangati"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/hai_materi" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_stat_green"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Keren! Kamu sudah menyelesaikan semua materi utama. Sekarang waktunya mencoba ujian seru untuk melihat seberapa hebat kamu memahami algoritma!"
+                    android:textColor="@color/algoplay_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="84dp"
+                    android:layout_height="84dp"
+                    android:layout_marginStart="8dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Robot senang"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/sorakan_leaderboard" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/gameSlotContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <LinearLayout
+                    android:id="@+id/gameChoiceContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <TextView
+                    android:id="@+id/btnResetGame"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp" />
+
+                <TextView
+                    android:id="@+id/btnCheckGame"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp" />
+
+                <LinearLayout
+                    android:id="@+id/quizOneContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <LinearLayout
+                    android:id="@+id/quizTwoContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btnFinishLesson"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_button_blue"
+                android:gravity="center"
+                android:text="Lanjut ke Ujian Seru"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/lessonTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_gravity="top"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_home_card"
+        android:elevation="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.08"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/lessonTopAvatarWrap"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_profile_avatar"
+                android:padding="7dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgLessonTopPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Foto profil"
+                    android:src="@drawable/ic_user"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.AlgoPlay.Circle"
+                    app:tint="@color/algoplay_blue_dark" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/txtLessonTopName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Teman"
+                android:textColor="@color/algoplay_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1.15"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtLessonTopDay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Minggu"
+                android:textColor="@color/algoplay_blue_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtLessonTopDateTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="7 Juni 2026 - 04:37"
+                android:textColor="@color/algoplay_subtext"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lessonRankBadge"
+            android:layout_width="92dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_reward_chip"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp">
+
+            <TextView
+                android:id="@+id/txtLessonRankLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="Tingkat 1"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtLessonRankStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Beginner"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>
